@@ -1,0 +1,27 @@
+name: SMPCore
+version: ${project.version}
+main: me.numin.smpcore.SMPCore
+api-version: 1.17
+prefix: CORE
+authors: [Numin]
+description: Core plugin for the SMP server
+
+commands:
+  core:
+    usage: /<command>
+    description: The plugins core command.
+  report:
+    usage: /<command>
+    description: Used to report issues on the server.
+  effect:
+    usage: /<command>
+    description: Used to activate or remove effects.
+  game:
+    usage: /<command>
+    description: Used to access the various game functions of the plugin.
+  testsound:
+    usage: /<command> <sound ID> <volume 0-2> <pitch 0-2>
+    description: Used to test different sound variables.
+  wand:
+    usage: /<command>
+    description: Used to pull up recipes for the active wands a player can craft.

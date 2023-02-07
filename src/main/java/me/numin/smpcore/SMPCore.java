@@ -1,0 +1,85 @@
+package me.numin.smpcore;
+
+import me.numin.smpcore.commands.CommandRegistry;
+import me.numin.smpcore.effects.api.Effect;
+import me.numin.smpcore.effects.api.EffectManager;
+import me.numin.smpcore.files.GameData;
+import me.numin.smpcore.files.ReportData;
+import me.numin.smpcore.game.Game;
+import me.numin.smpcore.game.GameManager;
+import me.numin.smpcore.inventories.api.CoreInventory;
+import me.numin.smpcore.listeners.*;
+import me.numin.smpcore.reporting.Report;
+import me.numin.smpcore.spells.api.Spell;
+import me.numin.smpcore.spells.api.SpellManager;
+import me.numin.smpcore.spells.api.Wands;
+import me.numin.smpcore.utils.Familiar;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.*;
+
+public final class SMPCore extends JavaPlugin {
+
+    public static SMPCore plugin;
+    public static ArrayList<Effect> effects = new ArrayList<>();
+    public static ArrayList<Familiar> familiars = new ArrayList<>();
+    public static ArrayList<Game> games = new ArrayList<>();
+    public static ArrayList<CoreInventory> inventories = new ArrayList<>();
+    public static ArrayList<Report> reports = new ArrayList<>();
+    public static Map<Player, Spell> spells = new HashMap<>();
+    public static List<String> staff = new ArrayList<>();
+
+    private GameData gameData;
+    private ReportData reportData;
+
+    @Override
+    public void onEnable() {
+        plugin = this;
+        gameData = new GameData(plugin);
+        reportData = new ReportData(plugin);
+        staff = Arrays.asList("Numin", "Tay3600", "SaraKillsCereal");
+
+        CommandRegistry.registerCommands();
+        reportData.loadReports();
+        registerListeners();
+        registerRunnables();
+        setupSpellRecipes();
+    }
+
+    @Override
+    public void onDisable() {
+        for (Familiar familiar : familiars) {
+            familiar.kill();
+        }
+        reportData.saveReports();
+    }
+
+    public GameData getGameData() {
+        return gameData;
+    }
+
+    public ReportData getReportData() {
+        return reportData;
+    }
+
+    public void registerListeners() {
+        getServer().getPluginManager().registerEvents(new CoreListener(), plugin);
+        getServer().getPluginManager().registerEvents(new EffectListener(), plugin);
+        getServer().getPluginManager().registerEvents(new GameListener(), plugin);
+        getServer().getPluginManager().registerEvents(new ReportListener(), plugin);
+        getServer().getPluginManager().registerEvents(new SpellListener(), plugin);
+        getServer().getPluginManager().registerEvents(new StaffListener(), plugin);
+        getServer().getPluginManager().registerEvents(new WandInventoryListener(), plugin);
+    }
+
+    public void registerRunnables() {
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, new EffectManager(), 20, 2);
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, new SpellManager(), 20, 1);
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, new GameManager(), 20, 1);
+    }
+
+    public void setupSpellRecipes() {
+        new Wands();
+    }
+}
