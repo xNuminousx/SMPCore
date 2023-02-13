@@ -10,6 +10,8 @@ import org.bukkit.util.Vector;
 
 import java.util.Random;
 
+//TODO: Add new familiars. Different designs, effects, etc.
+
 public class Familiar {
 
     private Location destination;
@@ -31,6 +33,12 @@ public class Familiar {
     public void kill() {
         host.getWorld().playSound(location, Sound.ENTITY_GHAST_DEATH, 0.1F, 1.5F);
         SMPCore.familiars.remove(this);
+    }
+
+    public static void killAll() {
+        for (Familiar familiar : SMPCore.familiars) {
+            familiar.kill();
+        }
     }
 
     public void move() {

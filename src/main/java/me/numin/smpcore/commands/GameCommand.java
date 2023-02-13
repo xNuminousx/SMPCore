@@ -13,7 +13,7 @@ public class GameCommand {
     public GameCommand(Player player, String[] args) {
         if (args.length < 1) {
             player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "Formats");
-            player.sendMessage("- /game start");
+            player.sendMessage("- /game start [name] [duration] [do respawn (true/false)]");
             player.sendMessage("- /game stop");
             player.sendMessage("- /game join");
             player.sendMessage("- /game leave");
@@ -102,7 +102,7 @@ public class GameCommand {
 
                 for (Game game : SMPCore.games) {
                     if (game.getPlayers().contains(player)) {
-                        player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "Your Game");
+                        player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "Your Game: " + game.getName());
                         player.sendMessage("Time remaining: " + game.getTimeRemainingAsString());
                         return;
                     }
@@ -111,7 +111,7 @@ public class GameCommand {
                 player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "Active Games");
                 for (Game game : SMPCore.games) {
                     index++;
-                    player.sendMessage("Game #" + index + ": " + game.getTimeRemainingAsString());
+                    player.sendMessage(ChatColor.YELLOW + "Game #" + index + " - " + game.getName() + ": " + ChatColor.RESET + game.getTimeRemainingAsString());
                 }
             } else if (input.equalsIgnoreCase("info")) {
                 if (SMPCore.games.isEmpty()) {
@@ -121,7 +121,7 @@ public class GameCommand {
                 int index = 0;
                 for (Game game : SMPCore.games) {
                     index++;
-                    player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "Game #" + index);
+                    player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "Game #" + index + ": " + game.getName());
                     player.sendMessage("Host: " + game.getHost().getDisplayName());
                     player.sendMessage("Time remaining: " + game.getTimeRemainingAsString());
                     player.sendMessage("Respawning: " + game.doRespawn());

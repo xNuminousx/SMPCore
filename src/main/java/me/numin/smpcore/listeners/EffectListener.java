@@ -41,16 +41,8 @@ public class EffectListener implements Listener {
                     return;
                 } else if (itemName.equalsIgnoreCase("Remove Effect")) {
                     Effect.remove(player);
-                } else if (itemName.equalsIgnoreCase("Ender")) {
-                    new EnderEffect(player);
-                    player.sendMessage("You now have the Ender effect.");
-                } else if (itemName.equalsIgnoreCase("Redstone")) {
-                    new RedstoneEffect(player);
-                    player.sendMessage("You now have the Redstone effect.");
-                } else if (itemName.equalsIgnoreCase("Rainbow")) {
-                    new RainbowEffect(player);
-                    player.sendMessage("You now have the Rainbow effect.");
                 }
+                Effect.initializeEffect(player, itemName);
                 event.setCancelled(true);
             }
         }

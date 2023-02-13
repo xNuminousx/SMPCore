@@ -24,7 +24,7 @@ public class Game {
 
     public Game(Player host) {
         this.host = host;
-        this.name = "Default";
+        this.name = "PvP";
         this.doRespawn = true;
         SMPCore.games.add(this);
         start();

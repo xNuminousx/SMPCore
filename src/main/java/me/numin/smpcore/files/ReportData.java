@@ -25,7 +25,7 @@ public class ReportData {
 
     public void loadReports() {
         try {
-            plugin.getLogger().info("Searching for saved reports.");
+            plugin.getLogger().info("Searching for saved reports...");
             Set<String> configKeys = getFile().getConfig().getKeys(true);
 
             for (String key : configKeys) {
@@ -76,11 +76,12 @@ public class ReportData {
 
     public void saveReports() {
         try {
-            plugin.getLogger().info("Saving unresolved reports.");
+            plugin.getLogger().info("Saving unresolved reports...");
             for (Report report : SMPCore.reports) {
                 saveReport(report);
             }
             file.saveConfig();
+            plugin.getLogger().info("Unresolved reports have been saved.");
         } catch (Exception e) {
             plugin.getLogger().warning("Failed to save a logged report.");
             e.printStackTrace();
