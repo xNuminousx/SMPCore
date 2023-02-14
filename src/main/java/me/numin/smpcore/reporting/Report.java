@@ -4,100 +4,57 @@ import me.numin.smpcore.SMPCore;
 import me.numin.smpcore.utils.CoreMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 public class Report {
 
-    public ArrayList<Report> queuedReports = new ArrayList<>();
+    //TODO: Allow for multiple reports of the same name to be stored. A duplicate report breaks the database.
 
-    private final ReportType type;
-    private final String author;
-    private final Player player;
-    private final String reportName;
-    private final String reason;
-    private final String time;
+    private OfflinePlayer author;
+    private String title;
+    private ReportType reportType;
+    private String message;
+    private String date;
 
-    private boolean queued;
-
-    public Report(String author, Player player, String reason) {
+    public Report(OfflinePlayer author, String title, ReportType reportType, String date, String message) {
         this.author = author;
-        this.player = player;
-        this.reportName = player.getName();
-        this.reason = reason;
-        this.type = ReportType.PLAYER;
+        this.title = title;
+        this.reportType = reportType;
+        this.date = date;
+        this.message = message;
 
+        SMPCore.plugin.getReports().add(this);
+    }
+    public Report(OfflinePlayer author, String title, ReportType reportType, String message) {
         Date now = new Date();
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa zzz");
-        this.time = format.format(now);
 
-        for (Report report : SMPCore.reports) {
-            if (report.getAuthor().equalsIgnoreCase(author) && report.getReportName().equalsIgnoreCase(player.getName())) {
-                report.getQueuedReports().add(this);
-                queued = true;
-            }
-        }
-        if (!queued)
-            SMPCore.reports.add(this);
+        new Report(author, title, reportType, format.format(now), message);
     }
 
-    public Report(String author, String reportName, String reason, ReportType type) {
-        this.author = author;
-        this.player = null;
-        this.reportName = reportName;
-        this.reason = reason;
-        this.type = type;
-
-        Date now = new Date();
-        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
-        this.time = format.format(now);
-
-        for (Report report : SMPCore.reports) {
-            if (report.getAuthor().equalsIgnoreCase(author) && report.getReportName().equalsIgnoreCase(reportName)) {
-                report.getQueuedReports().add(this);
-                queued = true;
-            }
-        }
-        if (!queued)
-            SMPCore.reports.add(this);
+    // IF THE REPORT IS ABOUT A PLAYER
+    public Report(OfflinePlayer author, Player title, String message) {
+        new Report(author, title.getName(), ReportType.PLAYER, message);
     }
 
-    public String getAuthor() {
-        return author;
+    public void delete() {
+        SMPCore.plugin.getReports().remove(this);
+        SMPCore.plugin.getDatabase().deleteReport(this);
     }
 
-    public Player getPlayer() {
-        return player;
+    public void open(Player player) {
+        player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "R E P O R T");
+        player.sendMessage(ChatColor.GOLD + "Title: " + ChatColor.RESET + getTitle());
+        player.sendMessage(ChatColor.GOLD + "Author: " + ChatColor.RESET + getAuthor().getName());
+        player.sendMessage(ChatColor.GOLD + "Time: " + ChatColor.RESET + getDate());
+        player.sendMessage(ChatColor.GOLD + "Message: " + ChatColor.RESET + getMessage());
     }
 
-    public String getReportName() {
-        return reportName;
-    }
-
-    public String getReason() {
-        return reason;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public ReportType getType() {
-        return type;
-    }
-
-    public ArrayList<Report> getQueuedReports() {
-        return queuedReports;
-    }
-
-    public boolean hasQueuedReports() {
-        return !getQueuedReports().isEmpty();
-    }
-
-    public static void notifyStaff() {
+    public void notifyStaff() {
         for (String name : SMPCore.staff) {
             Player player = Bukkit.getPlayer(name);
 
@@ -107,33 +64,23 @@ public class Report {
         }
     }
 
-    public static void open(Player player, Report report) {
-        int index = 0;
-        for (Report r : SMPCore.reports) {
-            if (r.equals(report)) {
-                break;
-            }
-            index++;
-        }
-
-        player.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "R E P O R T" + ChatColor.DARK_GRAY + " " + ChatColor.BOLD + "[" + index + "]");
-        player.sendMessage(ChatColor.GOLD + "Title: " + ChatColor.RESET + report.getReportName());
-        player.sendMessage(ChatColor.GOLD + "Author: " + ChatColor.RESET + report.getAuthor());
-        player.sendMessage(ChatColor.GOLD + "Time: " + ChatColor.RESET + report.getTime());
-
-        if (report.hasQueuedReports()) {
-            player.sendMessage(ChatColor.GOLD + "Reasons:");
-            player.sendMessage(ChatColor.GOLD + "- " + ChatColor.RESET + report.getReason());
-            for (Report queuedReport : report.getQueuedReports()) {
-                player.sendMessage(ChatColor.GOLD + "- " + ChatColor.RESET + queuedReport.getReason());
-            }
-        } else {
-            player.sendMessage(ChatColor.GOLD + "Reason: " + ChatColor.RESET + report.getReason());
-        }
+    public String getDate() {
+        return  date;
     }
 
-    public void resolve() {
-        SMPCore.reports.remove(this);
-        SMPCore.plugin.getReportData().unloadReport(this);
+    public OfflinePlayer getAuthor() {
+        return author;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public ReportType getReportType() {
+        return reportType;
+    }
+
+    public String getMessage() {
+        return message;
     }
 }

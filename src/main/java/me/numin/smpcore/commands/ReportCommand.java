@@ -17,7 +17,7 @@ public class ReportCommand {
         } else {
             // "/report delete"
             if (args[0].equalsIgnoreCase("delete")) {
-                if (SMPCore.reports.isEmpty()) {
+                if (SMPCore.plugin.getReports().isEmpty()) {
                     player.sendMessage(CoreMessage.noActiveReports());
                     return;
                 }
@@ -27,43 +27,43 @@ public class ReportCommand {
                     player.sendMessage(CoreMessage.missingIdentifier());
                 } else {
                     String reportOf = args[1];
-                    for (Report report : SMPCore.reports) {
-                        if (report.getReportName().equalsIgnoreCase(reportOf)) {
-                            SMPCore.reports.remove(report);
+                    for (Report report : SMPCore.plugin.getReports()) {
+                        if (report.getTitle().equalsIgnoreCase(reportOf)) {
+                            report.delete();
                             player.sendMessage(CoreMessage.resolvedReport());
                             return;
                         }
                     }
                     try {
                         int index = Integer.parseInt(reportOf);
-                        if (index >= SMPCore.reports.size()) {
+                        if (index >= SMPCore.plugin.getReports().size()) {
                             player.sendMessage(CoreMessage.invalidIdentifier());
                             return;
                         }
 
-                        Report report = SMPCore.reports.get(index);
+                        Report report = SMPCore.plugin.getReports().get(index);
                         if (report == null) {
                             player.sendMessage(CoreMessage.invalidIdentifier());
                             return;
                         }
 
-                        SMPCore.reports.remove(index);
+                        report.delete();
                         player.sendMessage(CoreMessage.resolvedReport());
                     } catch (Exception e) {
                         player.sendMessage(CoreMessage.invalidIdentifier());
                     }
                 }
             } else if (args[0].equalsIgnoreCase("newest")) {
-                if (SMPCore.reports.isEmpty()) {
+                if (SMPCore.plugin.getReports().isEmpty()) {
                     player.sendMessage(CoreMessage.noActiveReports());
                     return;
                 }
 
-                for (Iterator<Report> iterator = SMPCore.reports.iterator(); iterator.hasNext(); ) {
+                for (Iterator<Report> iterator = SMPCore.plugin.getReports().iterator(); iterator.hasNext(); ) {
                     Report report = iterator.next();
 
                     if (!iterator.hasNext()) {
-                        Report.open(player, report);
+                        report.open(player);
                     }
                 }
             } else {

@@ -129,11 +129,13 @@ public class CoreListener implements Listener {
 
         // ENABLE LAST EFFECT
         PlayerStats playerStats = SMPCore.plugin.getDatabase().getPlayerStatsByUUID(player.getUniqueId());
-        String effect = playerStats.getEffect();
-        Effect.initializeEffect(player, effect);
+        if (playerStats != null) {
+            String effect = playerStats.getEffect();
+            Effect.initializeEffect(player, effect);
+        }
 
-        if (SMPCore.staff.contains(player.getName()) && !SMPCore.reports.isEmpty()) {
-            int x = SMPCore.reports.size();
+        if (SMPCore.staff.contains(player.getName()) && !SMPCore.plugin.getReports().isEmpty()) {
+            int x = SMPCore.plugin.getReports().size();
             player.sendMessage(CoreMessage.outstandingReports(x));
         }
     }

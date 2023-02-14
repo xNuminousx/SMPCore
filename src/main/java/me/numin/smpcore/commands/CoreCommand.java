@@ -10,12 +10,7 @@ import java.sql.SQLException;
 
 public class CoreCommand {
 
-    private String[] args;
-    private Player player;
-
     public CoreCommand(Player player, String[] args) {
-        this.args = args;
-        this.player = player;
 
         if (args.length < 1) {
             new CoreHUD(player);

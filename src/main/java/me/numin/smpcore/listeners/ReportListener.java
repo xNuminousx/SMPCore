@@ -1,7 +1,6 @@
 package me.numin.smpcore.listeners;
 
 import me.numin.smpcore.SMPCore;
-import me.numin.smpcore.files.ReportData;
 import me.numin.smpcore.inventories.*;
 import me.numin.smpcore.inventories.api.CoreInventory;
 import me.numin.smpcore.reporting.Report;
@@ -17,7 +16,6 @@ import org.bukkit.inventory.ItemStack;
 
 public class ReportListener implements Listener {
 
-    private ReportData reportData;
     private InventoryClickEvent event;
     private ReportType type;
     private Player reportTarget;
@@ -109,8 +107,6 @@ public class ReportListener implements Listener {
                 type = ReportType.PLAYER;
                 typingReason = true;
             } else if (coreInventory.getName().equalsIgnoreCase("Reports")) {
-                reportData = SMPCore.plugin.getReportData();
-
                 if (invalidClick()) {
                     event.setCancelled(true);
                     return;
@@ -121,14 +117,14 @@ public class ReportListener implements Listener {
                 if (itemName.equalsIgnoreCase("Exit")) {
                     new CoreHUD(player);
                 } else {
-                    for (Report report : SMPCore.reports) {
-                        if (itemName.contains(report.getReportName())) {
+                    for (Report report : SMPCore.plugin.getReports()) {
+                        if (itemName.contains(report.getTitle())) {
                             if (event.isRightClick()) {
-                                report.resolve();
+                                report.delete();
                                 new StaffReportManagerHUD(player);
                                 break;
                             } else {
-                                Report.open(player, report);
+                                report.open(player);
                                 coreInventory.close();
                             }
                         }
@@ -160,13 +156,14 @@ public class ReportListener implements Listener {
             if (event.getMessage().equalsIgnoreCase("exit")) {
                 player.sendMessage(CoreMessage.exitedReport());
             } else {
+                Report report;
                 reason = event.getMessage();
                 if (type == ReportType.PLAYER) {
-                    new Report(player.getName(), reportTarget, reason);
-                } else if (type == ReportType.MISC || type == ReportType.BUG) {
-                    new Report(player.getName(), reportTitle, reason, type);
+                    report = new Report(player, reportTarget, reason);
+                } else {
+                    report = new Report(player, reportTitle, type, reason);
                 }
-                Report.notifyStaff();
+                report.notifyStaff();
                 player.sendMessage(CoreMessage.successfulReport());
             }
             typingReason = false;

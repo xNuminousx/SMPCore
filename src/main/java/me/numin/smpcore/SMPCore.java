@@ -6,7 +6,6 @@ import me.numin.smpcore.effects.api.Effect;
 import me.numin.smpcore.effects.api.EffectManager;
 import me.numin.smpcore.files.GameData;
 import me.numin.smpcore.files.HardcoreData;
-import me.numin.smpcore.files.ReportData;
 import me.numin.smpcore.game.Game;
 import me.numin.smpcore.game.GameManager;
 import me.numin.smpcore.inventories.api.CoreInventory;
@@ -31,28 +30,27 @@ public final class SMPCore extends JavaPlugin {
     public static ArrayList<Familiar> familiars = new ArrayList<>();
     public static ArrayList<Game> games = new ArrayList<>();
     public static ArrayList<CoreInventory> inventories = new ArrayList<>();
-    public static ArrayList<Report> reports = new ArrayList<>();
     public static Map<Player, Spell> spells = new HashMap<>();
     public static List<String> staff = new ArrayList<>();
+
+    private ArrayList<Report> reports = new ArrayList<>();
 
     private Database database;
     private GameData gameData;
     private HardcoreData hardcoreData;
-    private ReportData reportData;
 
     @Override
     public void onEnable() {
         plugin = this;
         gameData = new GameData(plugin);
         hardcoreData = new HardcoreData(plugin);
-        reportData = new ReportData(plugin);
         staff = Arrays.asList("Numin", "Tay3600", "SaraKillsCereal");
 
         database = new Database();
+        database.loadReports();
 
         CommandRegistry.registerCommands();
         hardcoreData.loadBannedPlayers();
-        reportData.loadReports();
         registerListeners();
         registerRunnables();
         setupSpellRecipes();
@@ -63,6 +61,9 @@ public final class SMPCore extends JavaPlugin {
         for (Familiar familiar : familiars)
             familiar.kill();
 
+        for (Report report : getReports())
+            getDatabase().saveReport(report);
+
         try {
             getDatabase().getConnection().close();
         } catch (SQLException e) {
@@ -71,7 +72,10 @@ public final class SMPCore extends JavaPlugin {
         }
 
         hardcoreData.saveBannedPlayers();
-        reportData.saveReports();
+    }
+
+    public ArrayList<Report> getReports() {
+        return reports;
     }
 
     public Database getDatabase() {
@@ -84,10 +88,6 @@ public final class SMPCore extends JavaPlugin {
 
     public HardcoreData getHardcoreData() {
         return hardcoreData;
-    }
-
-    public ReportData getReportData() {
-        return reportData;
     }
 
     public Location getSpawn() {

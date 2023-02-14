@@ -37,13 +37,11 @@ public class HardcoreData {
 
     public void loadBannedPlayers() {
         try {
-            plugin.getLogger().info("Loading the hardcore blacklist...");
             List<String> bPlayers = getFile().getConfig().getStringList("BannedPlayers");
             for (String player : bPlayers) {
                 UUID uuid = UUID.fromString(player);
                 bannedPlayers.add(uuid);
             }
-            plugin.getLogger().info("Finished loading hardcore blacklist.");
         } catch (Exception e) {
             plugin.getLogger().warning("Failed to load the hardcore blacklist.");
             e.printStackTrace();
@@ -52,11 +50,9 @@ public class HardcoreData {
 
     public void saveBannedPlayers() {
         try {
-            plugin.getLogger().info("Saving hardcore blacklist...");
             getFile().getConfig().addDefault("Banned Players", bannedPlayers);
             getFile().getConfig().options().copyDefaults(true);
             plugin.saveConfig();
-            plugin.getLogger().info("Hardcore blacklist saved.");
         } catch (Exception e) {
             plugin.getLogger().warning("Failed to save the hardcore blacklist.");
             e.printStackTrace();
