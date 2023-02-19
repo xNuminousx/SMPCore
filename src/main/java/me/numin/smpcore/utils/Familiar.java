@@ -1,9 +1,7 @@
 package me.numin.smpcore.utils;
 
 import me.numin.smpcore.SMPCore;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -33,12 +31,6 @@ public class Familiar {
     public void kill() {
         host.getWorld().playSound(location, Sound.ENTITY_GHAST_DEATH, 0.1F, 1.5F);
         SMPCore.familiars.remove(this);
-    }
-
-    public static void killAll() {
-        for (Familiar familiar : SMPCore.familiars) {
-            familiar.kill();
-        }
     }
 
     public void move() {
@@ -93,10 +85,19 @@ public class Familiar {
         if (new Random().nextInt(1000) < 3) {
             host.getWorld().playSound(location, Sound.ENTITY_GHAST_AMBIENT, 0.1F, 2);
         }
-
         host.getWorld().spawnParticle(Particle.TOWN_AURA, location, 10, 0.06, 0.06, 0.06, 0);
         host.getWorld().spawnParticle(Particle.SCRAPE, location, 2, 0.05, 0.05, 0.05, 0);
     }
+
+    /*public boolean hasObstacleInPath(Location target) {
+        World world = target.getWorld();
+        Location start = location.clone().add(0, 1, 0);
+        Vector ray = target.toVector().subtract(start.toVector().normalize());
+        double distance = start.distance(target);
+
+        RayTraceResult result = world.rayTraceBlocks(start, ray, distance, FluidCollisionMode.NEVER, true);
+        return result != null && result.getHitBlock() != null;
+    }*/
 
     public void refreshDestination() {
         destination = generateRandomPoint(host.getLocation());
@@ -125,10 +126,6 @@ public class Familiar {
             rest = true;
         }
         return newPoint;
-    }
-
-    public Location getDestination() {
-        return destination;
     }
 
     public Player getHost() {

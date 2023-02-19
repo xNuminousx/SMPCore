@@ -1,6 +1,7 @@
 package me.numin.smpcore.game;
 
 import me.numin.smpcore.SMPCore;
+import me.numin.smpcore.utils.CustomFirework;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -30,6 +31,13 @@ public class GameManager implements Runnable {
                     player.sendMessage("There are 5 seconds remaining in the game.");
                 }
                 timeNotif = true;
+            }
+
+            for (CustomFirework customFirework : CustomFirework.fireworks) {
+                if (customFirework.doTravel() && customFirework.getFirework().getLocation().distance(customFirework.getOrigin()) > 4) {
+                    customFirework.getFirework().detonate();
+                    customFirework.setDetonated(true);
+                }
             }
 
             Location center = SMPCore.plugin.getGameData().loadPoint("center");

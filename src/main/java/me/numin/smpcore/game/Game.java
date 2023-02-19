@@ -15,6 +15,7 @@ import java.util.Random;
 public class Game {
 
     private List<Player> players = new ArrayList<>();
+    private CustomFirework customFirework;
     private Player host;
     private String name;
 
@@ -50,7 +51,7 @@ public class Game {
     public void start() {
         this.startTime = System.currentTimeMillis();
         addPlayer(host);
-        new CustomFirework(getCenter(), 100, Color.GREEN, FireworkEffect.Type.BURST, true, true);
+        new CustomFirework(getCenter(), 100, Color.GREEN, FireworkEffect.Type.BURST, true, true, true);
     }
 
     public void stop() {
@@ -59,8 +60,9 @@ public class Game {
             leaveGame(player);
         }
         clearPlayers();
-        new CustomFirework(getCenter(), 100, Color.RED, FireworkEffect.Type.BURST, true, true);
+        customFirework = new CustomFirework(getCenter(), 100, Color.RED, FireworkEffect.Type.BURST, true, true, false);
 
+        //TODO: Firework doesn't travel because the game is removed from the cache. Have the firework move independently from the Game.
         SMPCore.games.remove(this);
     }
 
@@ -89,18 +91,16 @@ public class Game {
     }
 
     public String getTimeRemainingAsString() {
-        String constructor;
-
         float timeRemaining = (float) getTimeRemaining() / 60;
         int minute = Math.round(timeRemaining) - 1;
         int seconds = (int) (getTimeRemaining() % 60);
 
-        if (minute >= 1)
-            constructor = minute + "m " + seconds + "s";
-        else
-            constructor = getTimeRemaining() + "s";
-
-        return constructor;
+        if (minute >= 1) {
+            return minute + "m " +
+                    seconds + "s";
+        } else {
+            return getTimeRemaining() + "s";
+        }
     }
 
     public Player getHost() {
@@ -117,7 +117,7 @@ public class Game {
             player.sendMessage("There are no spawn points setup. Could not teleport you into the game.");
         } else {
             player.teleport(getRandomPoint());
-            new CustomFirework(player, 100, Color.YELLOW, FireworkEffect.Type.BALL, true, true);
+            new CustomFirework(player, 100, Color.YELLOW, FireworkEffect.Type.BALL, true, true, false);
         }
     }
 
@@ -136,7 +136,7 @@ public class Game {
     public void leaveGame(Player player) {
         Location spectate = SMPCore.plugin.getGameData().loadPoint("spectate");
 
-        new CustomFirework(player, 100, Color.YELLOW, FireworkEffect.Type.BALL, true, true);
+        new CustomFirework(player, 100, Color.YELLOW, FireworkEffect.Type.BALL, true, true, false);
 
         if (spectate == null) {
             player.sendMessage("You have left the game. Please use /spawn to exit the arena.");

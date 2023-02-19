@@ -24,13 +24,12 @@ public class StaffReportManagerHUD extends CoreInventory {
 
         for (Report report : SMPCore.plugin.getReports()) {
             List<String> lore = Arrays.asList("From: " + report.getAuthor().getName(), "Left-Click for details.", "Right-Click to resolve.");
-            if (index == bottomCenter) index++;
 
-            String header = "[" + index + "] ";
-            if (report.getReportType().equals(ReportType.PLAYER))
-                setSkullItem(index, Bukkit.getPlayer(report.getTitle()), index + ": " + report.getTitle(), lore);
-            else
-                setItem(index, Material.BOOK, header + report.getTitle(), lore);
+            if (report.getReportType() == ReportType.PLAYER) {
+                setSkullItem(index, Bukkit.getPlayer(report.getTitle()), (index + 1) + ": " + report.getTitle() + "[" + report.getIdentifier() + "]", lore);
+            } else {
+                setItem(index, Material.BOOK, (index + 1) + ": " + report.getTitle() + "[" + report.getIdentifier() + "]", lore);
+            }
             index++;
         }
         setItem(bottomCenter, Material.BARRIER, "Exit", null);

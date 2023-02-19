@@ -1,11 +1,12 @@
 package me.numin.smpcore.listeners;
 
 import me.numin.smpcore.SMPCore;
+import me.numin.smpcore.database.PlayerStatsCache;
 import me.numin.smpcore.effects.api.Effect;
 import me.numin.smpcore.inventories.*;
 import me.numin.smpcore.inventories.api.CoreInventory;
 import me.numin.smpcore.utils.CoreMessage;
-import me.numin.smpcore.utils.PlayerStats;
+import me.numin.smpcore.database.PlayerStats;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -20,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
 import java.sql.SQLException;
+import java.util.UUID;
 
 public class CoreListener implements Listener {
 
@@ -30,16 +32,19 @@ public class CoreListener implements Listener {
     }
 
     @EventHandler
-    public void onBlockBreak(BlockBreakEvent event) throws SQLException {
-        Player player = event.getPlayer();
-        PlayerStats playerStats = this.plugin.getDatabase().getPlayerStatsByUUID(player.getUniqueId());
+    public void onBlockBreak(BlockBreakEvent event) {
+        UUID uuid = event.getPlayer().getUniqueId();
+        PlayerStatsCache playerStatsCache = plugin.getPlayerStatsCache();
 
-        if (playerStats == null) {
-            playerStats = new PlayerStats(player.getUniqueId(), "", 0, 0, 1);
-            this.plugin.getDatabase().createPlayerStats(playerStats);
+        if (playerStatsCache.getPlayerStatsMap().containsKey(uuid)) {
+            try {
+                PlayerStats playerStats = playerStatsCache.getPlayerStats(uuid);
+                playerStats.setBlocksBroken(playerStats.getBlocksBroken() + 1);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         } else {
-            playerStats.setBlocksBroken(playerStats.getBlocksBroken() + 1);
-            this.plugin.getDatabase().updatePlayerStats(playerStats);
+            new PlayerStats(uuid, "", 0, 0, 1, plugin.getPlayerStatsCache());
         }
     }
 
@@ -111,31 +116,25 @@ public class CoreListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) throws SQLException {
         Player player = event.getPlayer();
+        UUID uuid = player.getUniqueId();
+
+        PlayerStatsCache playerStatsCache = plugin.getPlayerStatsCache();
+        if (playerStatsCache.getPlayerStatsMap().containsKey(uuid)) {
+            PlayerStats playerStats = playerStatsCache.getPlayerStats(uuid);
+            Effect.initializeEffect(player, playerStats.getEffect());
+        } else new PlayerStats(uuid, "", 0, 0, 0, plugin.getPlayerStatsCache());
 
         if (!player.hasPlayedBefore()) {
-
-            //Setup player database chart
-            PlayerStats playerStats = new PlayerStats(player.getUniqueId(), "", 0, 0, 0);
-            this.plugin.getDatabase().createPlayerStats(playerStats);
-
             // Give server info book.
-            for (int i = 0; i < player.getInventory().getSize(); i++) {
-                if (player.getInventory().getItem(i) == null) {
-                    player.getInventory().setItem(i, getServerInfoBook());
-                    return;
-                }
+            for (ItemStack item : player.getInventory().getContents()) {
+                if (item == null)
+                    player.getInventory().addItem(getServerInfoBook());
+                break;
             }
         }
 
-        // ENABLE LAST EFFECT
-        PlayerStats playerStats = SMPCore.plugin.getDatabase().getPlayerStatsByUUID(player.getUniqueId());
-        if (playerStats != null) {
-            String effect = playerStats.getEffect();
-            Effect.initializeEffect(player, effect);
-        }
-
-        if (SMPCore.staff.contains(player.getName()) && !SMPCore.plugin.getReports().isEmpty()) {
-            int x = SMPCore.plugin.getReports().size();
+        if (SMPCore.staff.contains(player.getName()) && !plugin.getReports().isEmpty()) {
+            int x = plugin.getReports().size();
             player.sendMessage(CoreMessage.outstandingReports(x));
         }
     }

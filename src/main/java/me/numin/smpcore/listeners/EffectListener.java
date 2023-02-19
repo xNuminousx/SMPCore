@@ -1,9 +1,6 @@
 package me.numin.smpcore.listeners;
 
-import me.numin.smpcore.effects.RainbowEffect;
 import me.numin.smpcore.effects.api.Effect;
-import me.numin.smpcore.effects.EnderEffect;
-import me.numin.smpcore.effects.RedstoneEffect;
 import me.numin.smpcore.inventories.CoreHUD;
 import me.numin.smpcore.inventories.api.CoreInventory;
 import org.bukkit.Material;
@@ -13,11 +10,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-
 public class EffectListener implements Listener {
 
-    private ArrayList<Effect> deletionQueue = new ArrayList<>();
+    //private ArrayList<Effect> deletionQueue = new ArrayList<>();
     private InventoryClickEvent event;
 
     @EventHandler

@@ -1,7 +1,7 @@
 name: SMPCore
 version: ${project.version}
 main: me.numin.smpcore.SMPCore
-api-version: 1.17
+api-version: 1.19
 prefix: CORE
 authors: [Numin]
 description: Core plugin for the SMP server
@@ -15,7 +15,7 @@ commands:
     description: Used to report issues on the server.
   hardcore:
     usage: /<command>
-    description: Used to manipulate the hardcore gamemode.
+    description: Used to manipulate the hardcore game.
   effect:
     usage: /<command>
     description: Used to activate or remove effects.

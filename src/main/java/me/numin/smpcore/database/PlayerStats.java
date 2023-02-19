@@ -1,8 +1,10 @@
-package me.numin.smpcore.utils;
+package me.numin.smpcore.database;
 
 import java.util.UUID;
 
 public class PlayerStats {
+
+    private PlayerStatsCache cache;
 
     private UUID uuid;
     private String effect;
@@ -10,12 +12,15 @@ public class PlayerStats {
     private int loses;
     private long blocksBroken;
 
-    public PlayerStats(UUID uuid, String effect, int wins, int loses, long blocksBroken) {
+    public PlayerStats(UUID uuid, String effect, int wins, int loses, long blocksBroken, PlayerStatsCache cache) {
         this.uuid = uuid;
         this.effect = effect;
         this.wins = wins;
         this.loses = loses;
         this.blocksBroken = blocksBroken;
+        this.cache = cache;
+
+        getCache().getPlayerStatsMap().put(uuid, this);
     }
 
     public String getEffect() {
@@ -52,5 +57,9 @@ public class PlayerStats {
 
     public UUID getUuid() {
         return uuid;
+    }
+
+    public PlayerStatsCache getCache() {
+        return cache;
     }
 }

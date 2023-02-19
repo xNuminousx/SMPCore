@@ -2,6 +2,7 @@ package me.numin.smpcore;
 
 import me.numin.smpcore.commands.CommandRegistry;
 import me.numin.smpcore.database.Database;
+import me.numin.smpcore.database.PlayerStatsCache;
 import me.numin.smpcore.effects.api.Effect;
 import me.numin.smpcore.effects.api.EffectManager;
 import me.numin.smpcore.files.GameData;
@@ -15,6 +16,7 @@ import me.numin.smpcore.spells.api.Spell;
 import me.numin.smpcore.spells.api.SpellManager;
 import me.numin.smpcore.spells.api.Wands;
 import me.numin.smpcore.utils.Familiar;
+import me.numin.smpcore.database.PlayerStats;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -36,6 +38,8 @@ public final class SMPCore extends JavaPlugin {
     private ArrayList<Report> reports = new ArrayList<>();
 
     private Database database;
+    private PlayerStatsCache playerStatsCache;
+
     private GameData gameData;
     private HardcoreData hardcoreData;
 
@@ -48,6 +52,8 @@ public final class SMPCore extends JavaPlugin {
 
         database = new Database();
         database.loadReports();
+        playerStatsCache = new PlayerStatsCache(database);
+        playerStatsCache.loadMap();
 
         CommandRegistry.registerCommands();
         hardcoreData.loadBannedPlayers();
@@ -63,6 +69,9 @@ public final class SMPCore extends JavaPlugin {
 
         for (Report report : getReports())
             getDatabase().saveReport(report);
+
+        for (PlayerStats playerStats : getPlayerStatsCache().getPlayerStatsMap().values())
+            getDatabase().injectPlayerStats(playerStats);
 
         try {
             getDatabase().getConnection().close();
@@ -80,6 +89,10 @@ public final class SMPCore extends JavaPlugin {
 
     public Database getDatabase() {
         return database;
+    }
+
+    public PlayerStatsCache getPlayerStatsCache() {
+        return playerStatsCache;
     }
 
     public GameData getGameData() {

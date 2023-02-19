@@ -118,7 +118,7 @@ public class ReportListener implements Listener {
                     new CoreHUD(player);
                 } else {
                     for (Report report : SMPCore.plugin.getReports()) {
-                        if (itemName.contains(report.getTitle())) {
+                        if (itemName.contains(report.getTitle() + "[" + report.getIdentifier() + "]")) {
                             if (event.isRightClick()) {
                                 report.delete();
                                 new StaffReportManagerHUD(player);

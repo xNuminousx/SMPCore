@@ -5,11 +5,12 @@ import me.numin.smpcore.database.Database;
 import me.numin.smpcore.effects.EnderEffect;
 import me.numin.smpcore.effects.RainbowEffect;
 import me.numin.smpcore.effects.RedstoneEffect;
-import me.numin.smpcore.utils.PlayerStats;
+import me.numin.smpcore.database.PlayerStats;
 import org.bukkit.entity.Player;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public abstract class Effect implements PlayerEffect {
 
@@ -24,7 +25,7 @@ public abstract class Effect implements PlayerEffect {
             PlayerStats playerStats = database.getPlayerStatsByUUID(player.getUniqueId());
 
             if (playerStats == null)
-                database.createPlayerStats(new PlayerStats(player.getUniqueId(), this.getName(), 0, 0, 0));
+                new PlayerStats(player.getUniqueId(), this.getName(), 0, 0, 0, SMPCore.plugin.getPlayerStatsCache());
             else {
                 playerStats.setEffect(this.getName());
                 database.updatePlayerStats(playerStats);
@@ -38,36 +39,28 @@ public abstract class Effect implements PlayerEffect {
     }
 
     public static void remove(Player player) {
-        ArrayList<Effect> deletionQueue = new ArrayList<>();
-        for (Effect effect : SMPCore.effects) {
-            if (effect.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-                deletionQueue.add(effect);
-            }
-        }
+        Set<Effect> effectsToRemove = SMPCore.effects.stream()
+                .filter(effect -> effect.getPlayer().getUniqueId().equals(player.getUniqueId()))
+                .collect(Collectors.toSet());
+        SMPCore.effects.removeAll(effectsToRemove);
 
-        if (!deletionQueue.isEmpty()) {
-            for (Effect effect : deletionQueue) {
-                SMPCore.effects.remove(effect);
-                effect.getPlayer().sendMessage("Your " + effect.getName() + " effect has been removed.");
+        if (!effectsToRemove.isEmpty()) {
+             try {
+                 Database database = SMPCore.plugin.getDatabase();
+                 PlayerStats playerStats = database.getPlayerStatsByUUID(player.getUniqueId());
 
-                //REMOVE FROM THE DATABASE
-                try {
-                    Database database = SMPCore.plugin.getDatabase();
-                    PlayerStats playerStats = database.getPlayerStatsByUUID(player.getUniqueId());
+                 if (playerStats != null) {
+                     effectsToRemove.forEach(effect -> playerStats.setEffect(""));
+                     database.updatePlayerStats(playerStats);
+                 }
+             } catch (SQLException e) {
+                 SMPCore.plugin.getLogger().info("Failed to remove an effect from player: " + player.getName());
+                 e.printStackTrace();
+             }
 
-                    if (playerStats != null) {
-                        playerStats.setEffect("");
-                        database.updatePlayerStats(playerStats);
-                    }
-                } catch (SQLException e) {
-                    SMPCore.plugin.getLogger().info("Failed to remove an effect from player: " + player.getName());
-                    e.printStackTrace();
-                }
-            }
-            deletionQueue.clear();
-        } else {
-            player.sendMessage("You do not have an effect.");
-        }
+            effectsToRemove.forEach(effect ->
+                    effect.getPlayer().sendMessage("Your " + effect.getName() + " effect has been removed."));
+        } else player.sendMessage("You do not have an effect.");
     }
 
     public static void initializeEffect(Player player, String effect) {
