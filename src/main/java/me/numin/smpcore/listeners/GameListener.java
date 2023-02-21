@@ -1,16 +1,16 @@
 package me.numin.smpcore.listeners;
 
-import me.numin.smpcore.SMPCore;
-import me.numin.smpcore.game.Game;
+import me.numin.smpcore.game.MobBattle;
+import me.numin.smpcore.game.PvPGame;
+import me.numin.smpcore.game.api.Game;
 import me.numin.smpcore.inventories.api.CoreInventory;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class GameListener implements Listener {
 
@@ -28,38 +28,61 @@ public class GameListener implements Listener {
 
             String itemName = event.getCurrentItem().getItemMeta().getDisplayName();
 
-            if (itemName.equalsIgnoreCase("Start a Game")) {
-                if (!SMPCore.games.isEmpty()) {
-                    player.sendMessage("There is already an active game. Try /game join");
-                    return;
-                }
-
-                player.sendMessage("Setting up game...");
+            if (itemName.equalsIgnoreCase("PvP Battle")) {
+                player.sendMessage("Setting up PvP game...");
                 coreInventory.close();
-                new Game(player);
+                new PvPGame(player, "PvP", 600000, true); // 10 minutes
+
+//                if (!SMPCore.games.isEmpty()) {
+//                    player.sendMessage("There is already an active game. Try /game join");
+//                    return;
+//                }
+//
+//                player.sendMessage("Setting up game...");
+//                coreInventory.close();
+//                new LegacyGame(player);
             } else if (itemName.equalsIgnoreCase("Join Current Game")) {
-                for (Game game : SMPCore.games) {
+                for (Game game : Game.games) {
                     game.addPlayer(player);
                     return;
                 }
                 player.sendMessage("There are no active games to join. Try /game start");
-            } else if (itemName.equalsIgnoreCase("Stop a Game")) {
-                if (SMPCore.games.isEmpty()) {
-                    player.sendMessage("There are no games to stop.");
-                }
-                List<Game> toStop = new ArrayList<>();
-                for (Game game : SMPCore.games) {
-                    if (game.getHost().getUniqueId().equals(player.getUniqueId()) || SMPCore.staff.contains(player.getName())) {
-                        player.sendMessage("Stopping the game...");
-                        toStop.add(game);
-                    } else {
-                        player.sendMessage("You are not the host of the game, so you cannot force stop it.");
-                    }
-                }
-                for (Game game : toStop)
-                    game.stop();
+            } else if (itemName.equalsIgnoreCase("Mob Battle")) {
+                player.sendMessage("Setting up Mob Battle...");
+                coreInventory.close();
+                new MobBattle(player, "MobBattle", 600000, true);
 
-                toStop.clear();
+//                if (SMPCore.games.isEmpty()) {
+//                    player.sendMessage("There are no games to stop.");
+//                }
+//                List<LegacyGame> toStop = new ArrayList<>();
+//                for (LegacyGame game : SMPCore.games) {
+//                    if (game.getHost().getUniqueId().equals(player.getUniqueId()) || SMPCore.staff.contains(player.getName())) {
+//                        player.sendMessage("Stopping the game...");
+//                        toStop.add(game);
+//                    } else {
+//                        player.sendMessage("You are not the host of the game, so you cannot force stop it.");
+//                    }
+//                }
+//                for (LegacyGame game : toStop)
+//                    game.stop();
+//
+//                toStop.clear();
+            }
+        }
+    }
+
+    @EventHandler
+    public void onEntityDeath(EntityDeathEvent event) {
+        for (Game game : Game.games) {
+            if (game instanceof MobBattle) {
+                MobBattle mobBattle = (MobBattle) game;
+                Entity mob = event.getEntity();
+                if (mobBattle.getMobs().contains(mob)) {
+                    event.getDrops().clear();
+                    mobBattle.getMobs().remove(mob);
+                }
+
             }
         }
     }
@@ -69,7 +92,7 @@ public class GameListener implements Listener {
         String command = event.getMessage();
         Player player = event.getPlayer();
 
-        for (Game game : SMPCore.games) {
+        for (Game game : Game.games) {
             if (game.getPlayers().contains(player)) {
                 if (command.toLowerCase().contains("/game")) {
                     event.setCancelled(false);

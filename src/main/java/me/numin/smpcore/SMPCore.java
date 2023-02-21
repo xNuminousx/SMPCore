@@ -7,8 +7,8 @@ import me.numin.smpcore.effects.api.Effect;
 import me.numin.smpcore.effects.api.EffectManager;
 import me.numin.smpcore.files.GameData;
 import me.numin.smpcore.files.HardcoreData;
-import me.numin.smpcore.game.Game;
-import me.numin.smpcore.game.GameManager;
+import me.numin.smpcore.game.api.Game;
+import me.numin.smpcore.game.api.GameManager;
 import me.numin.smpcore.inventories.api.CoreInventory;
 import me.numin.smpcore.listeners.*;
 import me.numin.smpcore.reporting.Report;
@@ -30,7 +30,6 @@ public final class SMPCore extends JavaPlugin {
     public static SMPCore plugin;
     public static ArrayList<Effect> effects = new ArrayList<>();
     public static ArrayList<Familiar> familiars = new ArrayList<>();
-    public static ArrayList<Game> games = new ArrayList<>();
     public static ArrayList<CoreInventory> inventories = new ArrayList<>();
     public static Map<Player, Spell> spells = new HashMap<>();
     public static List<String> staff = new ArrayList<>();
@@ -67,11 +66,14 @@ public final class SMPCore extends JavaPlugin {
         for (Familiar familiar : familiars)
             familiar.kill();
 
-        for (Report report : getReports())
-            getDatabase().saveReport(report);
+        for (Game game : Game.games)
+            game.stop();
 
         for (PlayerStats playerStats : getPlayerStatsCache().getPlayerStatsMap().values())
             getDatabase().injectPlayerStats(playerStats);
+
+        for (Report report : getReports())
+            getDatabase().saveReport(report);
 
         try {
             getDatabase().getConnection().close();

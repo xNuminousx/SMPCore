@@ -1,7 +1,9 @@
 package me.numin.smpcore.commands;
 
 import me.numin.smpcore.SMPCore;
-import me.numin.smpcore.game.Game;
+import me.numin.smpcore.game.MobBattle;
+import me.numin.smpcore.game.PvPGame;
+import me.numin.smpcore.game.api.Game;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -13,7 +15,7 @@ public class GameCommand {
     public GameCommand(Player player, String[] args) {
         if (args.length < 1) {
             player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "Formats");
-            player.sendMessage("- /game start [name] [duration] [do respawn (true/false)]");
+            player.sendMessage("- /game start <name> <duration in seconds> <respawning true/false>");
             player.sendMessage("- /game stop");
             player.sendMessage("- /game join");
             player.sendMessage("- /game leave");
@@ -26,38 +28,35 @@ public class GameCommand {
             String input = args[0];
 
             if (input.equalsIgnoreCase("start")) {
-                if (!SMPCore.games.isEmpty()) {
+                if (!Game.games.isEmpty()) {
                     player.sendMessage("There is already an active game. Try /game join");
                     return;
                 }
 
+                //TODO: Re-enable custom games once done testing.
                 if (args.length == 4) {
-                    player.sendMessage("Setting up game...");
                     String name = args[1];
                     long duration = Long.parseLong(args[2]);
                     boolean doRespawn = Boolean.getBoolean(args[3]);
-                    new Game(player, name, duration, doRespawn);
+                    if (name.equalsIgnoreCase("pvp")) new PvPGame(player, name, duration, doRespawn);
+                    else new MobBattle(player, name, duration, doRespawn);
                 } else if (args.length == 2) {
-                    player.sendMessage("Setting up game...");
                     String name = args[1];
-                    new Game(player, name);
+                    if (name.equalsIgnoreCase("pvp")) new PvPGame(player, name, 120000, true);
+                    else new MobBattle(player, name, 120000, true);
                 } else if (args.length == 1) {
-                    player.sendMessage("Setting up game...");
-                    new Game(player);
+                    player.sendMessage("Setting up Mob Battle with default settings.");
+                    new MobBattle(player, "MobBattle", 120000, true);
                 } else {
-                    if (SMPCore.staff.contains(player.getName())) {
-                        player.sendMessage("Format: /game start <name> <duration in seconds> <respawning true/false>");
-                    } else {
-                        player.sendMessage("Format: /game start");
-                    }
+                    player.sendMessage("Format: /game start <PVP / MobBattle> <duration in seconds> <respawning true/false>");
                 }
             } else if (input.equalsIgnoreCase("stop")) {
-                if (SMPCore.games.isEmpty()) {
+                if (Game.games.isEmpty()) {
                     player.sendMessage("There are no games to stop.");
                 }
 
                 List<Game> toStop = new ArrayList<>();
-                for (Game game : SMPCore.games) {
+                for (Game game : Game.games) {
                     if (game.getHost().getUniqueId().equals(player.getUniqueId()) || SMPCore.staff.contains(player.getName())) {
                         player.sendMessage("Stopping the game...");
                         toStop.add(game);
@@ -71,12 +70,12 @@ public class GameCommand {
                 }
                 toStop.clear();
             } else if (input.equalsIgnoreCase("join")) {
-                if (SMPCore.games.isEmpty()) {
+                if (Game.games.isEmpty()) {
                     player.sendMessage("There are no active games to join. Try /game start");
                     return;
                 }
 
-                for (Game game : SMPCore.games) {
+                for (Game game : Game.games) {
                     if (game.getPlayers().contains(player)) {
                         player.sendMessage("You are already in a game.");
                         return;
@@ -85,9 +84,9 @@ public class GameCommand {
                     return;
                 }
             } else if (input.equalsIgnoreCase("leave")) {
-                for (Game game : SMPCore.games) {
+                for (Game game : Game.games) {
                     if (game.getPlayers().contains(player)) {
-                        game.leaveGame(player);
+                        game.removePlayer(player);
                         return;
                     }
                 }
@@ -95,12 +94,12 @@ public class GameCommand {
             } else if (input.equalsIgnoreCase("time")) {
                 int index = 0;
 
-                if (SMPCore.games.isEmpty()) {
+                if (Game.games.isEmpty()) {
                     player.sendMessage("There are no active games.");
                     return;
                 }
 
-                for (Game game : SMPCore.games) {
+                for (Game game : Game.games) {
                     if (game.getPlayers().contains(player)) {
                         player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "Your Game: " + game.getName());
                         player.sendMessage("Time remaining: " + game.getTimeRemainingAsString());
@@ -109,23 +108,29 @@ public class GameCommand {
                 }
 
                 player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "Active Games");
-                for (Game game : SMPCore.games) {
+                for (Game game : Game.games) {
                     index++;
                     player.sendMessage(ChatColor.YELLOW + "Game #" + index + " - " + game.getName() + ": " + ChatColor.RESET + game.getTimeRemainingAsString());
                 }
             } else if (input.equalsIgnoreCase("info")) {
-                if (SMPCore.games.isEmpty()) {
+                if (Game.games.isEmpty()) {
                     player.sendMessage("There are no active games.");
                     return;
                 }
                 int index = 0;
-                for (Game game : SMPCore.games) {
+                for (Game game : Game.games) {
                     index++;
                     player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "Game #" + index + ": " + game.getName());
                     player.sendMessage("Host: " + game.getHost().getDisplayName());
                     player.sendMessage("Time remaining: " + game.getTimeRemainingAsString());
                     player.sendMessage("Respawning: " + game.doRespawn());
                     player.sendMessage("Spawn Points: " + game.getSpawnPoints().size());
+
+                    if (game instanceof MobBattle) {
+                        MobBattle mobBattle = (MobBattle) game;
+                        player.sendMessage("Wave: " + mobBattle.getWave());
+                        player.sendMessage("Mobs Remaining: " + mobBattle.getMobs().size());
+                    }
 
                     List<String> playerNames = new ArrayList<>();
                     for (Player thisPlayer : game.getPlayers()) {
@@ -138,12 +143,13 @@ public class GameCommand {
                     player.sendMessage("You do not have access to this command.");
                     return;
                 }
-                if (args.length == 2) {
-                    String name = args[1];
-                    SMPCore.plugin.getGameData().definePoint(name, player.getLocation());
-                    player.sendMessage("Adding a spawn point named [" + name + "]");
+                if (args.length == 3) {
+                    String gameName = args[1];
+                    String pointName = args[2];
+                    SMPCore.plugin.getGameData().definePoint(gameName, pointName, player.getLocation());
+                    player.sendMessage("Adding a spawn point for " + gameName + " named: " + pointName);
                 } else {
-                    player.sendMessage("Format: /game addpoint <name>");
+                    player.sendMessage("Format: /game addpoint <game name> <point name>");
                 }
             }
         }

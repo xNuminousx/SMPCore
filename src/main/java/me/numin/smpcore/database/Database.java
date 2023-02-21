@@ -52,9 +52,9 @@ public class Database {
         return connection;
     }
 
-    public Report getReport(String identifer) throws SQLException {
+    public Report getReport(String id) throws SQLException {
         PreparedStatement statement = getConnection().prepareStatement("SELECT * FROM reports WHERE identifier = ?");
-        statement.setString(1, identifer);
+        statement.setString(1, id);
         ResultSet results = statement.executeQuery();
 
         if (results.next()) {

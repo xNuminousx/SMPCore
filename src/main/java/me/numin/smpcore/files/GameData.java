@@ -3,11 +3,10 @@ package me.numin.smpcore.files;
 import me.numin.smpcore.SMPCore;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Pattern;
+import java.util.HashMap;
 
 public class GameData {
 
@@ -26,41 +25,47 @@ public class GameData {
         return file;
     }
 
-    public void definePoint(String name, Location location) {
+    public void definePoint(String game, String name, Location location) {
+        String path = pointPath + game + "." + name + ".";
         double x = location.getX(), y = location.getY(), z = location.getZ();
         float yaw = location.getYaw(), pitch = location.getPitch();
-        getFile().getConfig().set(pointPath + name + ".X", x);
-        getFile().getConfig().set(pointPath + name + ".Y", y);
-        getFile().getConfig().set(pointPath + name + ".Z", z);
-        getFile().getConfig().set(pointPath + name + ".Yaw", yaw);
-        getFile().getConfig().set(pointPath + name + ".Pitch", pitch);
+        getFile().getConfig().set(path + "World", location.getWorld().getName());
+        getFile().getConfig().set(path + "X", x);
+        getFile().getConfig().set(path + "Y", y);
+        getFile().getConfig().set(path + "Z", z);
+        getFile().getConfig().set(path + "Yaw", yaw);
+        getFile().getConfig().set(path + "Pitch", pitch);
         getFile().saveConfig();
     }
 
-    public Location loadPoint(String name) {
-        double x = getFile().getConfig().getDouble(pointPath + name + ".X");
-        double y = getFile().getConfig().getDouble(pointPath + name + ".Y");
-        double z = getFile().getConfig().getDouble(pointPath + name + ".Z");
-        float yaw = (float) getFile().getConfig().getDouble(pointPath + name + ".Yaw");
-        float pitch = (float) getFile().getConfig().getDouble(pointPath + name + ".Pitch");
-        return new Location(Bukkit.getWorld("world"), x, y, z, yaw, pitch);
+    public Location loadPoint(String game, String name) {
+        HashMap<String, Location> pointMap = getPoints(game);
+
+        for (String label : pointMap.keySet()) {
+            if (label.contains(name))
+                return pointMap.get(label);
+        }
+        return null;
     }
 
-    public List<String> getPoints() {
-        List<String> points = new ArrayList<>();
-        Set<String> configKeys = getFile().getConfig().getKeys(true);
-        for (String key : configKeys) {
-            String[] parts = key.split(Pattern.quote("."));
+    public HashMap<String, Location> getPoints(String game) {
+        ConfigurationSection section = file.getConfig().getConfigurationSection("Game.Points." + game);
+        HashMap<String, Location> pointMap = new HashMap<>();
 
-            if (parts.length == 3) {
-                String section = parts[1];
+        for (String key : section.getKeys(false)) {
+            ConfigurationSection pointSection = section.getConfigurationSection(key);
 
-                if (section.equalsIgnoreCase("Points")) {
-                    String name = parts[2];
-                    points.add(name);
-                }
-            }
+            String sWorld = pointSection.getString("World");
+            World world = Bukkit.getWorld(sWorld);
+            double x = pointSection.getDouble("X");
+            double y = pointSection.getDouble("Y");
+            double z = pointSection.getDouble("Z");
+            float yaw = (float) pointSection.getDouble("Yaw");
+            float pitch = (float) pointSection.getDouble("Pitch");
+
+            Location point = new Location(world, x, y, z, yaw, pitch);
+            pointMap.put(key, point);
         }
-        return points;
+        return pointMap;
     }
 }
