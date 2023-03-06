@@ -28,7 +28,7 @@ public abstract class CoreInventory implements InteractiveInventory {
     public int bottomCenterRight = 24;
 
     private Inventory inventory;
-    private Player player;
+    private final Player player;
 
     public CoreInventory(Player player) {
         this.player = player;

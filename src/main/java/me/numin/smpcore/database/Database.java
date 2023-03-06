@@ -47,7 +47,7 @@ public class Database {
         String password = "";
 
         this.connection = DriverManager.getConnection(url, user, password);
-        SMPCore.plugin.getLogger().info("Connected to the SMP database.");
+        SMPCore.plugin.getLogger().info("Connected to the database.");
 
         return connection;
     }
@@ -85,15 +85,9 @@ public class Database {
     }
 
     public void loadReports() {
-        SMPCore.plugin.getLogger().info("Loading reports.");
         try {
             PreparedStatement statement = getConnection().prepareStatement("SELECT * FROM reports");
             ResultSet results = statement.executeQuery();
-
-            if (results == null) {
-                SMPCore.plugin.getLogger().info("No reports found.");
-                return;
-            }
 
             while (results.next()) {
                 int identifier = results.getInt("identifier");
@@ -107,7 +101,7 @@ public class Database {
                 new Report(identifier, author, title, reportType, date, message);
             }
         } catch (SQLException e) {
-            SMPCore.plugin.getLogger().info("Failed to load saved reports.");
+            SMPCore.plugin.getLogger().info("Failed to load a report.");
             e.printStackTrace();
         }
     }

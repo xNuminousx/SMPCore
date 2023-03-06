@@ -1,5 +1,6 @@
 package me.numin.smpcore.spells;
 
+import me.numin.smpcore.SMPCore;
 import me.numin.smpcore.spells.api.Spell;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -10,11 +11,13 @@ import org.bukkit.potion.PotionEffectType;
 
 public class SpellOfHealing extends Spell {
 
-    private Location origin;
+    private final Location origin;
     private Location spiral;
 
-    int point;
-    long time;
+    private int amplifier;
+    private int duration;
+    private int point;
+    private long time;
 
     public SpellOfHealing(Player player) {
         super(player);
@@ -22,10 +25,13 @@ public class SpellOfHealing extends Spell {
         this.origin = player.getLocation();
         this.time = System.currentTimeMillis();
 
+        this.amplifier = SMPCore.plugin.getConfig().getInt("Spells.SpellOfHealing.Amplifier");
+        this.duration = SMPCore.plugin.getConfig().getInt("Spells.SpellOfHealing.Duration");
+
         player.playSound(origin, Sound.BLOCK_BELL_RESONATE, 0.5F, 2);
 
         origin.getWorld().spawnParticle(Particle.HEART, origin.clone().add(0, 2, 0), 1, 0, 0, 0, 0);
-        getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 200, 1));
+        getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, duration, amplifier));
     }
 
     @Override

@@ -10,11 +10,11 @@ import java.util.HashMap;
 
 public class GameData {
 
-    private SMPCore plugin;
-    private StorageFile file;
+    private final SMPCore plugin;
+    private final StorageFile file;
 
-    private String basePath = "Game.";
-    private String pointPath = basePath + "Points.";
+    private final String basePath = "Game.";
+    private final String pointPath = basePath + "Points.";
 
     public GameData(SMPCore plugin) {
         this.plugin = plugin;

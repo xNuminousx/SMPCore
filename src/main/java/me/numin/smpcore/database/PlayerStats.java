@@ -4,13 +4,15 @@ import java.util.UUID;
 
 public class PlayerStats {
 
-    private PlayerStatsCache cache;
+    private final PlayerStatsCache cache;
 
-    private UUID uuid;
+    private final UUID uuid;
     private String effect;
     private int wins;
     private int loses;
     private long blocksBroken;
+
+    //FIXME: Fix the chosen color of RedstoneEffect not saving in the database
 
     public PlayerStats(UUID uuid, String effect, int wins, int loses, long blocksBroken, PlayerStatsCache cache) {
         this.uuid = uuid;

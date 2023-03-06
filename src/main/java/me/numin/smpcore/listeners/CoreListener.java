@@ -49,7 +49,7 @@ public class CoreListener implements Listener {
     }
 
     @EventHandler
-    public void hudClick(InventoryClickEvent event) {
+    public void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player)event.getWhoClicked();
 
         if (CoreInventory.hasInventory(player)) {
@@ -79,7 +79,9 @@ public class CoreListener implements Listener {
                         }
                     }
                 } else if (itemName.equalsIgnoreCase("Numin")) {
-                    player.sendMessage("Hey, that tickled!");
+                    String message = SMPCore.plugin.getConfig().getString("Language.NuminMessage");
+                    if (message == null) message = "Hey, that tickled!";
+                    player.sendMessage(message);
                     coreInventory.close();
                 }
                 event.setCancelled(true);
@@ -88,7 +90,7 @@ public class CoreListener implements Listener {
     }
 
     @EventHandler
-    public void inventoryClose(InventoryCloseEvent event) {
+    public void onInventoryClose(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
 
         if (CoreInventory.hasInventory(player)) {
@@ -98,7 +100,7 @@ public class CoreListener implements Listener {
     }
 
     @EventHandler
-    public void onLeave(PlayerQuitEvent event) {
+    public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         Effect effect = null;
 
@@ -114,7 +116,7 @@ public class CoreListener implements Listener {
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent event) throws SQLException {
+    public void onPlayerJoin(PlayerJoinEvent event) throws SQLException {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
 

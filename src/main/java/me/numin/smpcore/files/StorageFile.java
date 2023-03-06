@@ -7,10 +7,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 
 public class StorageFile {
-    private SMPCore plugin;
+    private final SMPCore plugin;
 
-    private File file;
-    private FileConfiguration config;
+    private final File file;
+    private final FileConfiguration config;
 
     public StorageFile(String name) {
         this(new File(name + ".yml"));

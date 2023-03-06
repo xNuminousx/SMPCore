@@ -5,8 +5,8 @@ import me.numin.smpcore.database.Database;
 import me.numin.smpcore.database.PlayerStatsCache;
 import me.numin.smpcore.effects.api.Effect;
 import me.numin.smpcore.effects.api.EffectManager;
+import me.numin.smpcore.files.Config;
 import me.numin.smpcore.files.GameData;
-import me.numin.smpcore.files.HardcoreData;
 import me.numin.smpcore.game.api.Game;
 import me.numin.smpcore.game.api.GameManager;
 import me.numin.smpcore.inventories.api.CoreInventory;
@@ -27,6 +27,7 @@ import java.util.*;
 
 public final class SMPCore extends JavaPlugin {
 
+    //TODO: Fix all the array lists. Put in their respective classes?
     public static SMPCore plugin;
     public static ArrayList<Effect> effects = new ArrayList<>();
     public static ArrayList<Familiar> familiars = new ArrayList<>();
@@ -34,20 +35,20 @@ public final class SMPCore extends JavaPlugin {
     public static Map<Player, Spell> spells = new HashMap<>();
     public static List<String> staff = new ArrayList<>();
 
-    private ArrayList<Report> reports = new ArrayList<>();
+    private final ArrayList<Report> reports = new ArrayList<>();
 
     private Database database;
     private PlayerStatsCache playerStatsCache;
 
+    private Config config;
     private GameData gameData;
-    private HardcoreData hardcoreData;
 
     @Override
     public void onEnable() {
         plugin = this;
         gameData = new GameData(plugin);
-        hardcoreData = new HardcoreData(plugin);
-        staff = Arrays.asList("Numin", "Tay3600", "SaraKillsCereal");
+        config = new Config(plugin);
+        staff = config.getFile().getConfig().getStringList("Staff");
 
         database = new Database();
         database.loadReports();
@@ -55,7 +56,6 @@ public final class SMPCore extends JavaPlugin {
         playerStatsCache.loadMap();
 
         CommandRegistry.registerCommands();
-        hardcoreData.loadBannedPlayers();
         registerListeners();
         registerRunnables();
         setupSpellRecipes();
@@ -63,6 +63,7 @@ public final class SMPCore extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        //TODO: Fix all of the for loops. Put into their respective classes?
         for (Familiar familiar : familiars)
             familiar.kill();
 
@@ -81,8 +82,6 @@ public final class SMPCore extends JavaPlugin {
             getLogger().info("Unable to close database.");
             throw new RuntimeException(e);
         }
-
-        hardcoreData.saveBannedPlayers();
     }
 
     public ArrayList<Report> getReports() {
@@ -99,10 +98,6 @@ public final class SMPCore extends JavaPlugin {
 
     public GameData getGameData() {
         return gameData;
-    }
-
-    public HardcoreData getHardcoreData() {
-        return hardcoreData;
     }
 
     public Location getSpawn() {

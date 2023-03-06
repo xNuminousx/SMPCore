@@ -6,6 +6,7 @@ import me.numin.smpcore.effects.EnderEffect;
 import me.numin.smpcore.effects.RainbowEffect;
 import me.numin.smpcore.effects.RedstoneEffect;
 import me.numin.smpcore.database.PlayerStats;
+import org.bukkit.Color;
 import org.bukkit.entity.Player;
 
 import java.sql.SQLException;
@@ -68,7 +69,7 @@ public abstract class Effect implements PlayerEffect {
             new EnderEffect(player);
         else if (effect.equalsIgnoreCase("rainbow"))
             new RainbowEffect(player);
-        else if (effect.equalsIgnoreCase("redstone"))
-            new RedstoneEffect(player);
+        else if (effect.equalsIgnoreCase("colored dust"))
+            new RedstoneEffect(player, Color.RED);
     }
 }

@@ -8,8 +8,8 @@ public class RainbowCycle {
     private boolean riseGreen;
     private boolean riseBlue;
     private int r, g, b;
-    private int interval;
-    private int max;
+    private final int interval;
+    private final int max;
 
     /**
      * Class used to increase/decrease RGB values in a specific way to simulate a gradient

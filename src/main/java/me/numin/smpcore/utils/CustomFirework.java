@@ -12,10 +12,13 @@ import java.util.ArrayList;
 
 public class CustomFirework {
 
+    //FIXME: Fix the custom firework framework
+
     public static ArrayList<CustomFirework> fireworks = new ArrayList<>();
     private final Firework firework;
     private final Location origin;
-    private boolean hasDetonated = false, travel;
+    private boolean hasDetonated = false;
+    private final boolean travel;
 
     public CustomFirework(Player player, int power, Color color, FireworkEffect.Type type, boolean flicker, boolean trail, boolean travel) {
         Firework firework = (Firework) player.getWorld().spawnEntity(player.getLocation().add(0, 2, 0), EntityType.FIREWORK);

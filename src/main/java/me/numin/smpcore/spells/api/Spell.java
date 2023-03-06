@@ -6,9 +6,9 @@ import org.bukkit.entity.Player;
 
 public abstract class Spell implements Castable {
 
-    public enum SpellType {DAMAGING, FAMILIAR, HEALING};
+    public enum SpellType {DAMAGING, FAMILIAR, HEALING}
 
-    private Player player;
+    private final Player player;
 
     public Spell(Player player) {
         this.player = player;

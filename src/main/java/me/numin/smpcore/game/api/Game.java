@@ -13,16 +13,14 @@ public abstract class Game implements IGame {
     public static ArrayList<Game> games = new ArrayList<>();
 
     private ArrayList<Player> players = new ArrayList<>();
-    private Player host;
-    private String name;
+    private final Player host;
 
     boolean doRespawn;
     long duration;
     long startTime;
 
-    public Game(Player host, String name, long duration, boolean doRespawn) {
+    public Game(Player host, long duration, boolean doRespawn) {
         this.host = host;
-        this.name = name;
         this.doRespawn = doRespawn;
         this.duration = duration;
         this.startTime = System.currentTimeMillis();
@@ -31,19 +29,34 @@ public abstract class Game implements IGame {
         setup();
     }
 
-    public void spawn(Player player) {
-        int i = new Random().nextInt(getSpawnPoints().size());
-        player.teleport(getSpawnPoints().get(i));
+    public void spawnPlayer(Player player) {
+        if (getPlayerSpawnPoints() == null || getPlayerSpawnPoints().isEmpty()) {
+            SMPCore.plugin.getLogger().warning("No player spawn points found for a game! Stopping the game...");
+            stop();
+            return;
+        }
+
+        int i = new Random().nextInt(getPlayerSpawnPoints().size());
+        player.teleport(getPlayerSpawnPoints().get(i));
+    }
+
+    @Override
+    public void stop() {
+        if (getSpectate() == null)
+            SMPCore.plugin.getLogger().warning("No defined `spectate` point found. Unable to teleport players.");
+        else {
+            for (Player player : getPlayers()) {
+                player.teleport(getSpectate());
+                player.sendMessage("The game has stopped.");
+            }
+        }
+        getPlayers().clear();
+        games.remove(this);
     }
 
     @Override
     public Player getHost() {
         return host;
-    }
-
-    @Override
-    public String getName() {
-        return name;
     }
 
     @Override
@@ -63,11 +76,16 @@ public abstract class Game implements IGame {
 
     @Override
     public long getTimeRemaining() {
-        return ((getStartTime() + getDuration()) - System.currentTimeMillis()) / 1000;
+        return (getStartTime() + getDuration()) - System.currentTimeMillis();
     }
 
+    public long getTimeRemainingInSeconds() {
+        return getTimeRemaining() / 1000;
+    }
+
+    //FIXME: Not returning the correct numbers.
     public String getTimeRemainingAsString() {
-        float timeRemaining = (float) getTimeRemaining() / 60;
+        float timeRemaining = ((float) getTimeRemaining() / 60) / 1000;
         int minute = Math.round(timeRemaining) - 1;
         int seconds = (int) (getTimeRemaining() % 60);
 
@@ -81,19 +99,21 @@ public abstract class Game implements IGame {
 
     @Override
     public ArrayList<Player> getPlayers() {
+        if (players == null || players.isEmpty())
+            return players = new ArrayList<>();
         return players;
     }
 
     public void addPlayer(Player player) {
-        if (getPlayers().contains(player))
-            return;
-
         getPlayers().add(player);
-        spawn(player);
+        spawnPlayer(player);
         player.sendMessage("You've joined the game!");
     }
 
     public void removePlayer(Player player) {
+        if (!getPlayers().contains(player))
+            return;
+
         getPlayers().remove(player);
         player.sendMessage("You've left the game!");
     }
@@ -106,6 +126,8 @@ public abstract class Game implements IGame {
                 return gameData.loadPoint(getName(), name);
             }
         }
+        SMPCore.plugin.getLogger().warning("No defined `center` point found. Stopping game...");
+        stop();
         return null;
     }
 
@@ -121,7 +143,7 @@ public abstract class Game implements IGame {
     }
 
     @Override
-    public ArrayList<Location> getSpawnPoints() {
+    public ArrayList<Location> getPlayerSpawnPoints() {
         ArrayList<Location> points = new ArrayList<>();
         GameData gameData = SMPCore.plugin.getGameData();
 

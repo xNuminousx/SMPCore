@@ -1,6 +1,6 @@
 package me.numin.smpcore.game.api;
 
-import me.numin.smpcore.game.MobBattle;
+import me.numin.smpcore.SMPCore;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -8,12 +8,14 @@ import java.util.Iterator;
 
 public class GameManager implements Runnable {
 
-    boolean notifyTime = true;
-
     @Override
     public void run() {
         for (Game game : Game.games) {
-            if (game.getPlayers().isEmpty() || game.getTimeRemaining() > game.getDuration()) {
+            if (game.getPlayers() == null)
+                continue;
+
+            if (game.getPlayers().isEmpty() || game.getTimeRemaining() == 0) {
+                SMPCore.plugin.getLogger().info("Force stopping a game.");
                 game.stop();
                 return;
             }
@@ -27,29 +29,15 @@ public class GameManager implements Runnable {
                     continue;
                 }
 
-                if (player.isDead()) {
-                    if (game.doRespawn())
-                        game.spawn(player);
-                    else {
-                        players.remove();
-                        continue;
-                    }
-                }
-
-                if (game.getTimeRemaining() == 10000 && notifyTime) {
+                if (game.getTimeRemaining() == 10000) {
                     player.sendMessage("There are 10 seconds remaining in the game!");
-                    notifyTime = false;
                 }
 
                 if (player.getWorld() != center.getWorld() || player.getLocation().distance(center) > 30) {
-                    player.sendMessage("You have left the game.");
+                    player.sendMessage("You are out of range of the game. Exiting queue.");
                     players.remove();
                 }
-
-                if (game instanceof MobBattle) {
-                    MobBattle mobBattle = (MobBattle) game;
-                    mobBattle.run();
-                }
+                game.run();
             }
         }
     }

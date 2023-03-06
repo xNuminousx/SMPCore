@@ -17,7 +17,7 @@ public class EffectHUD extends CoreInventory {
     public void setItems() {
         setItem(topCenterLeft, Material.ENDER_PEARL, "Ender", null);
         setItem(topCenter, Material.DRAGON_BREATH, "Rainbow", null);
-        setItem(topCenterRight, Material.REDSTONE, "Redstone", null);
+        setItem(topCenterRight, Material.REDSTONE, "Colored Dust", null);
         setItem(bottomCenterLeft, Material.BUCKET, "Remove Effect", Arrays.asList("Command Alternative", "/effect remove"));
         setItem(bottomCenterRight, Material.BARRIER, "Exit", null);
     }

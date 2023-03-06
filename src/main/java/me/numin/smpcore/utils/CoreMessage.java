@@ -1,5 +1,6 @@
 package me.numin.smpcore.utils;
 
+import me.numin.smpcore.SMPCore;
 import org.bukkit.ChatColor;
 
 public class CoreMessage {
@@ -10,24 +11,20 @@ public class CoreMessage {
 
     // MESSAGES
 
-    public enum CoreMessages {
-
-    }
-
     public static String exitedReport() {
-        return "You have exited your report entry.";
+        return SMPCore.plugin.getConfig().getString("Language.ReportExit");
     }
     public static String invalidIdentifier() {
-        return "That is an invalid report identifier.";
+        return SMPCore.plugin.getConfig().getString("Language.InvalidIdentifier");
     }
     public static String miscBugReportTitlePrompt() {
-        return "Please enter 1 to 2 words to title your report or say 'exit' to exit the report.";
+        return SMPCore.plugin.getConfig().getString("Language.MiscBugTitlePrompt");
     }
     public static String miscPlayerReportTitlePrompt() {
-        return "Please enter the name of who you're reporting and hit enter or say 'exit' to exit the report.";
+        return SMPCore.plugin.getConfig().getString("Language.MiscPlayerTitlePrompt");
     }
     public static String missingIdentifier() {
-        return "You must include an identifier. Ex: Index number or report title.";
+        return SMPCore.plugin.getConfig().getString("Language.MissingIdentifier");
     }
     public static String newReport() {
         return alert + "There is a new report! Use " + ChatColor.YELLOW + "/report newest" + ChatColor.RESET + " to view it.";
@@ -36,15 +33,15 @@ public class CoreMessage {
         return alert + "There are " + ChatColor.YELLOW + x + ChatColor.RESET + " report(s) to be reviewed.";
     }
     public static String noActiveReports() {
-        return "There are no unresolved reports.";
+        return SMPCore.plugin.getConfig().getString("Language.NoReports");
     }
     public static String reportDescPrompt() {
-        return "Please type a brief description of the report or say 'exit' to exit the report.";
+        return SMPCore.plugin.getConfig().getString("Language.DescriptionPrompt");
     }
     public static String resolvedReport() {
-        return "That report has been successfully resolved.";
+        return SMPCore.plugin.getConfig().getString("Language.ResolvedReport");
     }
     public static String successfulReport() {
-        return "Thank you for your report!";
+        return SMPCore.plugin.getConfig().getString("Language.SuccessfulReport");
     }
 }

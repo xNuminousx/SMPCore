@@ -4,6 +4,7 @@ import me.numin.smpcore.SMPCore;
 import me.numin.smpcore.game.MobBattle;
 import me.numin.smpcore.game.PvPGame;
 import me.numin.smpcore.game.api.Game;
+import me.numin.smpcore.game.api.Wave;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -15,7 +16,7 @@ public class GameCommand {
     public GameCommand(Player player, String[] args) {
         if (args.length < 1) {
             player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "Formats");
-            player.sendMessage("- /game start <name> <duration in seconds> <respawning true/false>");
+            player.sendMessage("- /game start <PVP / MobBattle> <duration> <respawning true/false>");
             player.sendMessage("- /game stop");
             player.sendMessage("- /game join");
             player.sendMessage("- /game leave");
@@ -28,27 +29,27 @@ public class GameCommand {
             String input = args[0];
 
             if (input.equalsIgnoreCase("start")) {
+                //TODO: Remove when ready to allow multiple games running at the same time.
                 if (!Game.games.isEmpty()) {
                     player.sendMessage("There is already an active game. Try /game join");
                     return;
                 }
-
                 //TODO: Re-enable custom games once done testing.
                 if (args.length == 4) {
-                    String name = args[1];
+                    String name = args[1].toLowerCase();
                     long duration = Long.parseLong(args[2]);
                     boolean doRespawn = Boolean.getBoolean(args[3]);
-                    if (name.equalsIgnoreCase("pvp")) new PvPGame(player, name, duration, doRespawn);
-                    else new MobBattle(player, name, duration, doRespawn);
+
+                    initiateGame(player, name, duration, doRespawn);
                 } else if (args.length == 2) {
                     String name = args[1];
-                    if (name.equalsIgnoreCase("pvp")) new PvPGame(player, name, 120000, true);
-                    else new MobBattle(player, name, 120000, true);
+
+                    initiateGame(player, name, 120000, true); // default 2 minute game with respawn
                 } else if (args.length == 1) {
-                    player.sendMessage("Setting up Mob Battle with default settings.");
-                    new MobBattle(player, "MobBattle", 120000, true);
+                    player.sendMessage("No game defined. Setting up a 2 minute Mob Battle by default.");
+                    new MobBattle(player, 120000, true); // default 2 minute game with respawn
                 } else {
-                    player.sendMessage("Format: /game start <PVP / MobBattle> <duration in seconds> <respawning true/false>");
+                    player.sendMessage("Format: /game start <PVP / MobBattle> <duration> <respawning true/false>");
                 }
             } else if (input.equalsIgnoreCase("stop")) {
                 if (Game.games.isEmpty()) {
@@ -86,6 +87,7 @@ public class GameCommand {
             } else if (input.equalsIgnoreCase("leave")) {
                 for (Game game : Game.games) {
                     if (game.getPlayers().contains(player)) {
+                        player.teleport(game.getSpectate());
                         game.removePlayer(player);
                         return;
                     }
@@ -124,12 +126,14 @@ public class GameCommand {
                     player.sendMessage("Host: " + game.getHost().getDisplayName());
                     player.sendMessage("Time remaining: " + game.getTimeRemainingAsString());
                     player.sendMessage("Respawning: " + game.doRespawn());
-                    player.sendMessage("Spawn Points: " + game.getSpawnPoints().size());
+                    player.sendMessage("Spawn Points: " + game.getPlayerSpawnPoints().size());
 
                     if (game instanceof MobBattle) {
                         MobBattle mobBattle = (MobBattle) game;
-                        player.sendMessage("Wave: " + mobBattle.getWave());
-                        player.sendMessage("Mobs Remaining: " + mobBattle.getMobs().size());
+                        Wave wave = mobBattle.getWave();
+                        player.sendMessage("Wave: " + wave.getStage());
+                        player.sendMessage("Mobs Remaining: " + wave.getMobsRemaining());
+                        player.sendMessage("Grace Period: " + wave.isInGracePeriod());
                     }
 
                     List<String> playerNames = new ArrayList<>();
@@ -145,6 +149,8 @@ public class GameCommand {
                 }
                 if (args.length == 3) {
                     String gameName = args[1];
+                    if (gameName.equalsIgnoreCase("pvp")) gameName = "PvP";
+                    else if (gameName.equalsIgnoreCase("mobbattle")) gameName = "MobBattle";
                     String pointName = args[2];
                     SMPCore.plugin.getGameData().definePoint(gameName, pointName, player.getLocation());
                     player.sendMessage("Adding a spawn point for " + gameName + " named: " + pointName);
@@ -152,6 +158,21 @@ public class GameCommand {
                     player.sendMessage("Format: /game addpoint <game name> <point name>");
                 }
             }
+        }
+    }
+
+    public void initiateGame(Player player, String name, long duration, boolean doRespawn) {
+        String gameName = name.toLowerCase();
+        switch (gameName) {
+            case "pvp":
+                new PvPGame(player, duration, doRespawn);
+                break;
+            case "mobbattle":
+                new MobBattle(player, duration, doRespawn);
+                break;
+            default:
+                player.sendMessage("`" + gameName + "` is not a valid game. Try `pvp` or `mobbattle`");
+
         }
     }
 }

@@ -14,7 +14,7 @@ public class GameHUD extends CoreInventory {
     @Override
     public void setItems() {
         setItem(topCenterLeft, Material.IRON_SWORD, "PvP Battle", null);
-        setItem(topCenter, Material.DIAMOND_SWORD, "Join Current Game", null);
+        setItem(topCenter, Material.END_CRYSTAL, "Join a Game", null);
         setItem(topCenterRight, Material.ZOMBIE_HEAD, "Mob Battle", null);
     }
 

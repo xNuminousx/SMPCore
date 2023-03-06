@@ -2,39 +2,29 @@ package me.numin.smpcore.game;
 
 import me.numin.smpcore.SMPCore;
 import me.numin.smpcore.files.GameData;
+import me.numin.smpcore.game.api.BattleEntity;
 import me.numin.smpcore.game.api.Game;
+import me.numin.smpcore.game.api.Wave;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Zombie;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-
-//TODO: Make *pretty*
+import java.util.Random;
 
 public class MobBattle extends Game {
 
-    ArrayList<Entity> mobs = new ArrayList<>();
-    ArrayList<Location> mobSpawnPoints;
+    //TODO: Make *pretty*
+    //TODO: Track the number of waves a player has played for rewards
 
-    boolean forceStartNewWave, spawnMobs, startGracePeriod, waveStarted;
-    int wave;
-    long gracePeriodDuration = 20000; // 20 seconds
-    long gracePeriodStartTime;
-    long waveDuration = 60000; // 1 minute
-    long waveStartTime;
+    public enum Difficulty {EASY, MEDIUM, HARD}
 
-    public MobBattle(Player host, String name, long duration, boolean doRespawn) {
-        super(host, name, duration, doRespawn);
+    private Difficulty difficulty;
+    private final Wave wave;
 
-        mobSpawnPoints = getMobSpawnPoints();
-        this.forceStartNewWave = false;
-        this.spawnMobs = false;
-        this.startGracePeriod = true;
-        this.waveStarted = false;
-        this.gracePeriodStartTime = System.currentTimeMillis();
-        this.wave = 1;
+    public MobBattle(Player host, long duration, boolean doRespawn) {
+        super(host, duration, doRespawn);
+        this.wave = new Wave(this, 5000); // 5-second grace periods
+        this.difficulty = Difficulty.EASY;
     }
 
     @Override
@@ -44,81 +34,39 @@ public class MobBattle extends Game {
 
     @Override
     public void stop() {
-        for (Entity mob : mobs)
-            mob.remove();
-
-        for (Player player : getPlayers())
-            player.teleport(getSpectate());
-
-        getPlayers().clear();
-        games.remove(this);
+        wave.cleanUp();
+        super.stop();
     }
 
+    @Override
+    public String getName() {
+        return "MobBattle";
+    }
+
+    @Override
     public void run() {
-        // END WAVE, START GRACE PERIOD
-        if (forceStartNewWave || (waveStarted && (waveStartTime + waveDuration) <= System.currentTimeMillis())) {
-            // CLEAN UP MOBS
-            Iterator<Entity> iterator = mobs.iterator();
-            while (iterator.hasNext()) {
-                Entity mob = iterator.next();
-                mob.remove();
-                iterator.remove();
-            }
+        wave.progress();
 
-            gracePeriodStartTime = System.currentTimeMillis();
-            wave++;
-            forceStartNewWave = false;
-            startGracePeriod = true;
-            waveStarted = false;
-            for (Player player : getPlayers())
-                player.sendMessage("New wave starting! You have " + gracePeriodDuration / 1000 + "s to prepare!");
-        }
-
-        // END GRACE PERIOD
-        if (startGracePeriod) {
-            if ((gracePeriodStartTime + gracePeriodDuration) <= System.currentTimeMillis()) {
-                startGracePeriod = false;
-                spawnMobs = true;
-                waveStarted = true;
-                waveStartTime = System.currentTimeMillis();
-                for (Player player : getPlayers())
-                    player.sendMessage("Grace period has ended. Now starting Wave #" + wave + ".");
-            }
-
-        // PROGRESS WAVE
-        } else {
-            if (spawnMobs) {
-                for (Location point : mobSpawnPoints) {
-                    for (int i = 0; i < wave; i++) {
-                        Entity mob = point.getWorld().spawn(point, Zombie.class);
-                        mobs.add(mob);
-                    }
-                }
-                spawnMobs = false;
-            }
-
-            if (mobs.isEmpty()) forceStartNewWave = true;
-        }
+        // stage 1-5 = easy, 6-10 = medium, 11+ = hard
+        int stage = wave.getStage();
+        if (stage > 10) difficulty = Difficulty.HARD;
+        else if (stage > 5) difficulty = Difficulty.MEDIUM;
+        else difficulty = Difficulty.EASY;
     }
 
-    public int getWave() {
+    public Wave getWave() {
         return wave;
     }
 
-    public long getGracePeriodDuration() {
-        return gracePeriodDuration;
+    public Difficulty getDifficulty() {
+        return difficulty;
     }
 
-    public long getWaveDuration() {
-        return waveDuration;
-    }
+    public ArrayList<BattleEntity> getMobs() {
+        if (wave.getMobs() == null || wave.getMobs().isEmpty())
+            return null;
 
-    public long getWaveStartTime() {
-        return waveStartTime;
-    }
-
-    public ArrayList<Entity> getMobs() {
-        return mobs;
+        return wave.getMobs();
     }
 
     public ArrayList<Location> getMobSpawnPoints() {
@@ -130,5 +78,15 @@ public class MobBattle extends Game {
                 points.add(gameData.loadPoint(getName(), name));
         }
         return points;
+    }
+
+    public Location getRandomMobSpawn() {
+        ArrayList<Location> spawnPoints = getMobSpawnPoints();
+
+        if (spawnPoints == null || spawnPoints.isEmpty())
+            return null;
+
+        int i = new Random().nextInt(getMobSpawnPoints().size());
+        return getMobSpawnPoints().get(i);
     }
 }

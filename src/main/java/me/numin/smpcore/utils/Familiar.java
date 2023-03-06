@@ -14,10 +14,13 @@ public class Familiar {
 
     private Location destination;
     private Location location;
-    private Player host;
-    private Vector vector;
+    private final Player host;
+    private final Vector vector;
     private boolean rest;
     private long startedResting, lastUpdate;
+
+    private double range;
+    private double soundFrequency;
 
     public Familiar(Player player) {
         host = player;
@@ -25,6 +28,10 @@ public class Familiar {
         destination = generateRandomPoint(location);
         vector = new Vector(0, 0, 0);
         host.getWorld().playSound(location, Sound.ENTITY_GHAST_AMBIENT, 0.1F, 2);
+
+        this.range = SMPCore.plugin.getConfig().getDouble("Spells.SpellOfFamiliar.Range");
+        this.soundFrequency = SMPCore.plugin.getConfig().getDouble("Spells.SpellOfFamiliar.SoundFrequency");
+
         SMPCore.familiars.add(this);
     }
 
@@ -45,7 +52,7 @@ public class Familiar {
         double radius = 4;
         double speed = hostDistance > radius ? 0.4 : 0.1;
 
-        if (hostDistance > 15) {
+        if (hostDistance > range) {
             location = generateRandomPoint(host.getEyeLocation());
         }
 
@@ -82,9 +89,9 @@ public class Familiar {
             }
         }
 
-        if (new Random().nextInt(1000) < 3) {
+        if (new Random().nextInt(1000) < soundFrequency)
             host.getWorld().playSound(location, Sound.ENTITY_GHAST_AMBIENT, 0.1F, 2);
-        }
+
         host.getWorld().spawnParticle(Particle.TOWN_AURA, location, 10, 0.06, 0.06, 0.06, 0);
         host.getWorld().spawnParticle(Particle.SCRAPE, location, 2, 0.05, 0.05, 0.05, 0);
     }

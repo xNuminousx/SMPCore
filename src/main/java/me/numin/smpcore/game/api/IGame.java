@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public interface IGame {
     void setup();
     void stop();
+    void run();
     Location getCenter();
     Location getSpectate();
     Player getHost();
@@ -16,6 +17,6 @@ public interface IGame {
     long getDuration();
     long getStartTime();
     long getTimeRemaining();
-    ArrayList<Location> getSpawnPoints();
+    ArrayList<Location> getPlayerSpawnPoints();
     ArrayList<Player> getPlayers();
 }
