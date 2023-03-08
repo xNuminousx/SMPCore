@@ -48,7 +48,7 @@ public final class SMPCore extends JavaPlugin {
         plugin = this;
         gameData = new GameData(plugin);
         config = new Config(plugin);
-        staff = config.getFile().getConfig().getStringList("Staff");
+        staff = getConfig().getStringList("Staff");
 
         database = new Database();
         database.loadReports();
