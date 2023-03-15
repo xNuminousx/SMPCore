@@ -117,7 +117,7 @@ public class ReportListener implements Listener {
                 if (itemName.equalsIgnoreCase("Exit")) {
                     new CoreHUD(player);
                 } else {
-                    for (Report report : SMPCore.plugin.getReports()) {
+                    for (Report report : SMPCore.plugin.getDatabase().getReportData().getReports()) {
                         if (itemName.contains(report.getTitle() + "[" + report.getIdentifier() + "]")) {
                             if (event.isRightClick()) {
                                 report.delete();

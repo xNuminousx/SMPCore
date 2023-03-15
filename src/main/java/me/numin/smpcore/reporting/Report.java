@@ -28,7 +28,7 @@ public class Report {
         this.date = date;
         this.message = message;
 
-        SMPCore.plugin.getReports().add(this);
+        SMPCore.plugin.getDatabase().getReportData().getReports().add(this);
     }
 
     public Report(OfflinePlayer author, String title, ReportType reportType, String date, String message) {
@@ -48,8 +48,8 @@ public class Report {
     }
 
     public void delete() {
-        SMPCore.plugin.getReports().remove(this);
-        SMPCore.plugin.getDatabase().deleteReport(this);
+        SMPCore.plugin.getDatabase().getReportData().getReports().remove(this);
+        SMPCore.plugin.getDatabase().getReportData().deleteReport(this);
     }
 
     public void open(Player player) {
@@ -76,7 +76,7 @@ public class Report {
 
     public int setIdentifier() {
         int randomNumber = new Random().nextInt(9000) + 1000;
-        for (Report report : SMPCore.plugin.getReports()) {
+        for (Report report : SMPCore.plugin.getDatabase().getReportData().getReports()) {
             if (report.getIdentifier() == randomNumber)
                 randomNumber = new Random().nextInt(9000) + 1000;
         }

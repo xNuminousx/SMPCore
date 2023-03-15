@@ -19,7 +19,6 @@ import org.bukkit.inventory.ItemStack;
 
 public class EffectListener implements Listener {
 
-    //private ArrayList<Effect> deletionQueue = new ArrayList<>();
     private InventoryClickEvent event;
 
     @EventHandler

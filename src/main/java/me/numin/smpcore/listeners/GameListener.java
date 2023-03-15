@@ -1,6 +1,7 @@
 package me.numin.smpcore.listeners;
 
 import me.numin.smpcore.SMPCore;
+import me.numin.smpcore.database.ServerPlayer;
 import me.numin.smpcore.game.MobBattle;
 import me.numin.smpcore.game.PvPGame;
 import me.numin.smpcore.game.api.BattleEntity;
@@ -95,10 +96,10 @@ public class GameListener implements Listener {
                 MobBattle mobBattle = (MobBattle) game;
 
                 //TODO: See if this prevents the NPE
-                if (mobBattle.getMobs() == null || mobBattle.getMobs().isEmpty())
+                if (mobBattle.getMobs() == null || mobBattle.getMobs().isEmpty() || !mobBattle.getMobs().containsKey(event.getEntity()))
                     return;
 
-                for (BattleEntity bEntity : mobBattle.getMobs()) {
+                for (BattleEntity bEntity : mobBattle.getMobs().values()) {
                     Entity entity = event.getEntity();
 
                     if (bEntity.getEntity() == entity) {
@@ -107,6 +108,14 @@ public class GameListener implements Listener {
                         break;
                     }
                 }
+
+                Player player = event.getEntity().getKiller();
+                ServerPlayer sPlayer = SMPCore.plugin.getDatabase().getPlayerData().getServerPlayer(player.getUniqueId());
+
+                if (sPlayer == null || !mobBattle.getPlayers().contains(player))
+                    return;
+
+                sPlayer.setMobsKilled(sPlayer.getMobsKilled() + 1);
             }
         }
     }

@@ -22,7 +22,7 @@ public class StaffReportManagerHUD extends CoreInventory {
     public void setItems() {
         int index = 0;
 
-        for (Report report : SMPCore.plugin.getReports()) {
+        for (Report report : SMPCore.plugin.getDatabase().getReportData().getReports()) {
             List<String> lore = Arrays.asList("From: " + report.getAuthor().getName(), "Left-Click for details.", "Right-Click to resolve.");
 
             if (report.getReportType() == ReportType.PLAYER) {

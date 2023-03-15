@@ -64,6 +64,10 @@ public class Config {
         config.addDefault("Language.SuccessfulReport", "Thank you for your report!");
         config.addDefault("Language.NuminMessage", "Hey, that tickled!");
 
+        config.addDefault("Storage.url", "jdbc:mysql://localhost/smp_stats");
+        config.addDefault("Storage.username", "root");
+        config.addDefault("Storage.password", "");
+
         config.options().copyDefaults(true);
         plugin.saveConfig();
     }

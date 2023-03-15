@@ -4,13 +4,17 @@ import me.numin.smpcore.SMPCore;
 import me.numin.smpcore.game.MobBattle;
 import me.numin.smpcore.utils.Timer;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Wave {
 
-    private ArrayList<BattleEntity> mobs = new ArrayList<>();
+    //TODO: Track waves a player has contributed to. Will be used for future reward system.
+
+    private HashMap<Entity, BattleEntity> mobs = new HashMap<>();
     private MobBattle game;
     private Timer mobTimer;
     private Timer gracePeriod;
@@ -78,7 +82,7 @@ public class Wave {
 
     public void cleanUp() {
         if (mobs != null ) {
-            for (BattleEntity mob : mobs)
+            for (BattleEntity mob : mobs.values())
                 mob.getEntity().remove();
             mobs.clear();
         }
@@ -97,12 +101,12 @@ public class Wave {
             for (int i = 0; i < mobsToSpawn + stage; i++) {
                 Location point = game.getRandomMobSpawn();
                 BattleEntity bEntity = new BattleEntity(game, point, !(stage == 1));
-                mobs.add(bEntity);
+                mobs.put(bEntity.getEntity(), bEntity);
             }
         }
     }
 
-    public ArrayList<BattleEntity> getMobs() {
+    public HashMap<Entity, BattleEntity> getMobs() {
         return mobs;
     }
 
@@ -112,7 +116,7 @@ public class Wave {
 
     public int getMobsRemaining() {
         int remaining = 0;
-        for (BattleEntity mob : mobs) {
+        for (BattleEntity mob : mobs.values()) {
             if (!mob.getEntity().isDead())
                 remaining++;
         }

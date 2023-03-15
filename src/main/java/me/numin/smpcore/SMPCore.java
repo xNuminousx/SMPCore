@@ -2,7 +2,6 @@ package me.numin.smpcore;
 
 import me.numin.smpcore.commands.CommandRegistry;
 import me.numin.smpcore.database.Database;
-import me.numin.smpcore.database.PlayerStatsCache;
 import me.numin.smpcore.effects.api.Effect;
 import me.numin.smpcore.effects.api.EffectManager;
 import me.numin.smpcore.files.Config;
@@ -11,12 +10,10 @@ import me.numin.smpcore.game.api.Game;
 import me.numin.smpcore.game.api.GameManager;
 import me.numin.smpcore.inventories.api.CoreInventory;
 import me.numin.smpcore.listeners.*;
-import me.numin.smpcore.reporting.Report;
 import me.numin.smpcore.spells.api.Spell;
 import me.numin.smpcore.spells.api.SpellManager;
 import me.numin.smpcore.spells.api.Wands;
 import me.numin.smpcore.utils.Familiar;
-import me.numin.smpcore.database.PlayerStats;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -35,10 +32,7 @@ public final class SMPCore extends JavaPlugin {
     public static Map<Player, Spell> spells = new HashMap<>();
     public static List<String> staff = new ArrayList<>();
 
-    private final ArrayList<Report> reports = new ArrayList<>();
-
     private Database database;
-    private PlayerStatsCache playerStatsCache;
 
     private Config config;
     private GameData gameData;
@@ -50,10 +44,7 @@ public final class SMPCore extends JavaPlugin {
         config = new Config(plugin);
         staff = getConfig().getStringList("Staff");
 
-        database = new Database();
-        database.loadReports();
-        playerStatsCache = new PlayerStatsCache(database);
-        playerStatsCache.loadMap();
+        database = new Database(this);
 
         CommandRegistry.registerCommands();
         registerListeners();
@@ -63,37 +54,25 @@ public final class SMPCore extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        //TODO: Fix all of the for loops. Put into their respective classes?
+        //TODO: Fix all the for loops. Put into their respective classes?
         for (Familiar familiar : familiars)
             familiar.kill();
 
         for (Game game : Game.games)
             game.stop();
 
-        for (PlayerStats playerStats : getPlayerStatsCache().getPlayerStatsMap().values())
-            getDatabase().injectPlayerStats(playerStats);
-
-        for (Report report : getReports())
-            getDatabase().saveReport(report);
+        database.uploadAllData();
 
         try {
-            getDatabase().getConnection().close();
+            database.getConnection().close();
         } catch (SQLException e) {
             getLogger().info("Unable to close database.");
             throw new RuntimeException(e);
         }
     }
 
-    public ArrayList<Report> getReports() {
-        return reports;
-    }
-
     public Database getDatabase() {
         return database;
-    }
-
-    public PlayerStatsCache getPlayerStatsCache() {
-        return playerStatsCache;
     }
 
     public GameData getGameData() {

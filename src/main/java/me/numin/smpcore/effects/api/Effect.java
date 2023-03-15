@@ -1,15 +1,13 @@
 package me.numin.smpcore.effects.api;
 
 import me.numin.smpcore.SMPCore;
-import me.numin.smpcore.database.Database;
+import me.numin.smpcore.database.ServerPlayer;
 import me.numin.smpcore.effects.EnderEffect;
 import me.numin.smpcore.effects.RainbowEffect;
 import me.numin.smpcore.effects.RedstoneEffect;
-import me.numin.smpcore.database.PlayerStats;
 import org.bukkit.Color;
 import org.bukkit.entity.Player;
 
-import java.sql.SQLException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -18,24 +16,13 @@ public abstract class Effect implements PlayerEffect {
     public Effect(Player player) {
         SMPCore.effects.removeIf(effect -> effect.getPlayer().getUniqueId() == player.getUniqueId());
         SMPCore.effects.add(this);
-        //SMPCore.plugin.data.addEffect(player, this);
 
-        //SAVE TO THE DATABASE
-        try {
-            Database database = SMPCore.plugin.getDatabase();
-            PlayerStats playerStats = database.getPlayerStatsByUUID(player.getUniqueId());
-
-            if (playerStats == null)
-                new PlayerStats(player.getUniqueId(), this.getName(), 0, 0, 0, SMPCore.plugin.getPlayerStatsCache());
-            else {
-                playerStats.setEffect(this.getName());
-                database.updatePlayerStats(playerStats);
-            }
-        } catch (SQLException e) {
-            SMPCore.plugin.getLogger().info("Failed to save an effect for player: " + player.getName());
-            e.printStackTrace();
+        ServerPlayer sPlayer = SMPCore.plugin.getDatabase().getPlayerData().getServerPlayer(player.getUniqueId());
+        if (sPlayer == null) {
+            new ServerPlayer(player.getUniqueId(), this.getName(), 0, 0);
+        } else {
+            sPlayer.setEffect(this.getName());
         }
-
         player.sendMessage("You now have the " + this.getName() + " effect!");
     }
 
@@ -46,18 +33,10 @@ public abstract class Effect implements PlayerEffect {
         SMPCore.effects.removeAll(effectsToRemove);
 
         if (!effectsToRemove.isEmpty()) {
-             try {
-                 Database database = SMPCore.plugin.getDatabase();
-                 PlayerStats playerStats = database.getPlayerStatsByUUID(player.getUniqueId());
+            ServerPlayer sPlayer = SMPCore.plugin.getDatabase().getPlayerData().getServerPlayer(player.getUniqueId());
 
-                 if (playerStats != null) {
-                     effectsToRemove.forEach(effect -> playerStats.setEffect(""));
-                     database.updatePlayerStats(playerStats);
-                 }
-             } catch (SQLException e) {
-                 SMPCore.plugin.getLogger().info("Failed to remove an effect from player: " + player.getName());
-                 e.printStackTrace();
-             }
+            if (sPlayer != null)
+                sPlayer.setEffect("");
 
             effectsToRemove.forEach(effect ->
                     effect.getPlayer().sendMessage("Your " + effect.getName() + " effect has been removed."));
@@ -65,6 +44,7 @@ public abstract class Effect implements PlayerEffect {
     }
 
     public static void initializeEffect(Player player, String effect) {
+        //TODO: Add customized color support for dust trail
         if (effect.equalsIgnoreCase("ender"))
             new EnderEffect(player);
         else if (effect.equalsIgnoreCase("rainbow"))

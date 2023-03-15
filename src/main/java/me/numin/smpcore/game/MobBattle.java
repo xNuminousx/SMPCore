@@ -1,14 +1,17 @@
 package me.numin.smpcore.game;
 
 import me.numin.smpcore.SMPCore;
+import me.numin.smpcore.database.ServerPlayer;
 import me.numin.smpcore.files.GameData;
 import me.numin.smpcore.game.api.BattleEntity;
 import me.numin.smpcore.game.api.Game;
 import me.numin.smpcore.game.api.Wave;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 public class MobBattle extends Game {
@@ -34,6 +37,14 @@ public class MobBattle extends Game {
 
     @Override
     public void stop() {
+        for (Player player : getPlayers()) {
+            ServerPlayer sPlayer = SMPCore.plugin.getDatabase().getPlayerData().getServerPlayer(player.getUniqueId());
+
+            if (sPlayer == null)
+                continue;
+
+            SMPCore.plugin.getDatabase().getPlayerData().insertServerPlayer(sPlayer);
+        }
         wave.cleanUp();
         super.stop();
     }
@@ -62,7 +73,7 @@ public class MobBattle extends Game {
         return difficulty;
     }
 
-    public ArrayList<BattleEntity> getMobs() {
+    public HashMap<Entity, BattleEntity> getMobs() {
         if (wave.getMobs() == null || wave.getMobs().isEmpty())
             return null;
 

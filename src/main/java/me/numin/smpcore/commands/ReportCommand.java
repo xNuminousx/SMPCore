@@ -6,18 +6,21 @@ import me.numin.smpcore.reporting.Report;
 import me.numin.smpcore.utils.CoreMessage;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public class ReportCommand {
 
     public ReportCommand(Player player, String[] args) {
+        ArrayList<Report> reports = SMPCore.plugin.getDatabase().getReportData().getReports();
+
         // "/report"
         if (args.length < 1) {
             new MainReportHUD(player);
         } else {
             // "/report delete"
             if (args[0].equalsIgnoreCase("delete")) {
-                if (SMPCore.plugin.getReports().isEmpty()) {
+                if (reports.isEmpty()) {
                     player.sendMessage(CoreMessage.noActiveReports());
                     return;
                 }
@@ -27,7 +30,7 @@ public class ReportCommand {
                     player.sendMessage(CoreMessage.missingIdentifier());
                 } else {
                     String reportOf = args[1];
-                    for (Report report : SMPCore.plugin.getReports()) {
+                    for (Report report : reports) {
                         if (report.getTitle().equalsIgnoreCase(reportOf)) {
                             report.delete();
                             player.sendMessage(CoreMessage.resolvedReport());
@@ -36,12 +39,12 @@ public class ReportCommand {
                     }
                     try {
                         int index = Integer.parseInt(reportOf);
-                        if (index >= SMPCore.plugin.getReports().size()) {
+                        if (index >= reports.size()) {
                             player.sendMessage(CoreMessage.invalidIdentifier());
                             return;
                         }
 
-                        Report report = SMPCore.plugin.getReports().get(index);
+                        Report report = reports.get(index);
                         if (report == null) {
                             player.sendMessage(CoreMessage.invalidIdentifier());
                             return;
@@ -54,12 +57,12 @@ public class ReportCommand {
                     }
                 }
             } else if (args[0].equalsIgnoreCase("newest")) {
-                if (SMPCore.plugin.getReports().isEmpty()) {
+                if (reports.isEmpty()) {
                     player.sendMessage(CoreMessage.noActiveReports());
                     return;
                 }
 
-                for (Iterator<Report> iterator = SMPCore.plugin.getReports().iterator(); iterator.hasNext(); ) {
+                for (Iterator<Report> iterator = reports.iterator(); iterator.hasNext(); ) {
                     Report report = iterator.next();
 
                     if (!iterator.hasNext()) {
