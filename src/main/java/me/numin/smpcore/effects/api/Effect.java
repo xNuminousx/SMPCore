@@ -8,14 +8,17 @@ import me.numin.smpcore.effects.RedstoneEffect;
 import org.bukkit.Color;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class Effect implements PlayerEffect {
 
+    public static ArrayList<Effect> effects = new ArrayList<>();
+
     public Effect(Player player) {
-        SMPCore.effects.removeIf(effect -> effect.getPlayer().getUniqueId() == player.getUniqueId());
-        SMPCore.effects.add(this);
+        effects.removeIf(effect -> effect.getPlayer().getUniqueId() == player.getUniqueId());
+        effects.add(this);
 
         ServerPlayer sPlayer = SMPCore.plugin.getDatabase().getPlayerData().getServerPlayer(player.getUniqueId());
         if (sPlayer == null) {
@@ -27,10 +30,10 @@ public abstract class Effect implements PlayerEffect {
     }
 
     public static void remove(Player player) {
-        Set<Effect> effectsToRemove = SMPCore.effects.stream()
+        Set<Effect> effectsToRemove = effects.stream()
                 .filter(effect -> effect.getPlayer().getUniqueId().equals(player.getUniqueId()))
                 .collect(Collectors.toSet());
-        SMPCore.effects.removeAll(effectsToRemove);
+        effects.removeAll(effectsToRemove);
 
         if (!effectsToRemove.isEmpty()) {
             ServerPlayer sPlayer = SMPCore.plugin.getDatabase().getPlayerData().getServerPlayer(player.getUniqueId());

@@ -1,6 +1,5 @@
 package me.numin.smpcore.spells.api;
 
-import me.numin.smpcore.SMPCore;
 import me.numin.smpcore.utils.Familiar;
 import org.bukkit.entity.Player;
 
@@ -8,7 +7,7 @@ public class SpellManager implements Runnable {
 
     @Override
     public void run() {
-        for (Spell spell : SMPCore.spells.values()) {
+        for (Spell spell : Spell.spells.values()) {
             Player player = spell.getPlayer();
 
             if (player.isDead() || !player.isOnline()) {
@@ -22,7 +21,7 @@ public class SpellManager implements Runnable {
             }
         }
 
-        for (Familiar familiar : SMPCore.familiars) {
+        for (Familiar familiar : Familiar.familiars) {
             Player host = familiar.getHost();
 
             if (host.isDead() || !host.isOnline()) {

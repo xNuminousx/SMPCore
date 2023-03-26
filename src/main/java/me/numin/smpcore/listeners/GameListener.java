@@ -53,38 +53,12 @@ public class GameListener implements Listener {
                 player.sendMessage("Setting up PvP game...");
                 coreInventory.close();
                 new PvPGame(player, 600000, true); // 10 minutes
-
-//                if (!SMPCore.games.isEmpty()) {
-//                    player.sendMessage("There is already an active game. Try /game join");
-//                    return;
-//                }
-//
-//                player.sendMessage("Setting up game...");
-//                coreInventory.close();
-//                new LegacyGame(player);
             } else if (itemName.equalsIgnoreCase("Join a Game")) {
                 new GameSelectorHUD(player);
             } else if (itemName.equalsIgnoreCase("Mob Battle")) {
                 player.sendMessage("Setting up Mob Battle...");
                 coreInventory.close();
                 new MobBattle(player, 120000, true);
-
-//                if (SMPCore.games.isEmpty()) {
-//                    player.sendMessage("There are no games to stop.");
-//                }
-//                List<LegacyGame> toStop = new ArrayList<>();
-//                for (LegacyGame game : SMPCore.games) {
-//                    if (game.getHost().getUniqueId().equals(player.getUniqueId()) || SMPCore.staff.contains(player.getName())) {
-//                        player.sendMessage("Stopping the game...");
-//                        toStop.add(game);
-//                    } else {
-//                        player.sendMessage("You are not the host of the game, so you cannot force stop it.");
-//                    }
-//                }
-//                for (LegacyGame game : toStop)
-//                    game.stop();
-//
-//                toStop.clear();
             }
         }
     }

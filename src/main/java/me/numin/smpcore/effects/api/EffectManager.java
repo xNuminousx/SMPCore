@@ -5,12 +5,15 @@ import org.bukkit.entity.Player;
 
 public class EffectManager implements Runnable {
 
-    public EffectManager() {
+    private SMPCore plugin;
+
+    public EffectManager(SMPCore plugin) {
+        this.plugin = plugin;
     }
 
     @Override
     public void run() {
-        for (Effect effect : SMPCore.effects) {
+        for (Effect effect : Effect.effects) {
             Player player = effect.getPlayer();
 
             if (!player.isOnline() || player.isDead()) {
@@ -20,7 +23,7 @@ public class EffectManager implements Runnable {
             try {
                 effect.run();
             } catch (Exception e) {
-                SMPCore.plugin.getLogger().warning("Failed to run effect '" + effect.getName() + "' for " + effect.getPlayer().getName() + ".");
+                plugin.getLogger().warning("Failed to run effect '" + effect.getName() + "' for " + effect.getPlayer().getName() + ".");
                 e.printStackTrace();
             }
         }

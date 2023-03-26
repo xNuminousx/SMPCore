@@ -2,73 +2,50 @@ package me.numin.smpcore;
 
 import me.numin.smpcore.commands.CommandRegistry;
 import me.numin.smpcore.database.Database;
-import me.numin.smpcore.effects.api.Effect;
 import me.numin.smpcore.effects.api.EffectManager;
 import me.numin.smpcore.files.Config;
 import me.numin.smpcore.files.GameData;
 import me.numin.smpcore.game.api.Game;
 import me.numin.smpcore.game.api.GameManager;
-import me.numin.smpcore.inventories.api.CoreInventory;
 import me.numin.smpcore.listeners.*;
-import me.numin.smpcore.spells.api.Spell;
 import me.numin.smpcore.spells.api.SpellManager;
 import me.numin.smpcore.spells.api.Wands;
 import me.numin.smpcore.utils.Familiar;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.sql.SQLException;
 import java.util.*;
 
 public final class SMPCore extends JavaPlugin {
 
-    //TODO: Fix all the array lists. Put in their respective classes?
     public static SMPCore plugin;
-    public static ArrayList<Effect> effects = new ArrayList<>();
-    public static ArrayList<Familiar> familiars = new ArrayList<>();
-    public static ArrayList<CoreInventory> inventories = new ArrayList<>();
-    public static Map<Player, Spell> spells = new HashMap<>();
     public static List<String> staff = new ArrayList<>();
-
     private Database database;
-
-    private Config config;
     private GameData gameData;
 
     @Override
     public void onEnable() {
         plugin = this;
-        gameData = new GameData(plugin);
-        config = new Config(plugin);
-        staff = getConfig().getStringList("Staff");
 
+        new Config(plugin);
+        new Wands();
+
+        staff = getConfig().getStringList("Staff");
+        gameData = new GameData(plugin);
         database = new Database(this);
 
         CommandRegistry.registerCommands();
         registerListeners();
         registerRunnables();
-        setupSpellRecipes();
     }
 
     @Override
     public void onDisable() {
-        //TODO: Fix all the for loops. Put into their respective classes?
-        for (Familiar familiar : familiars)
-            familiar.kill();
-
-        for (Game game : Game.games)
-            game.stop();
-
+        Familiar.killAll();
+        Game.stopAll();
         database.uploadAllData();
-
-        try {
-            database.getConnection().close();
-        } catch (SQLException e) {
-            getLogger().info("Unable to close database.");
-            throw new RuntimeException(e);
-        }
+        database.close();
     }
 
     public Database getDatabase() {
@@ -87,7 +64,6 @@ public final class SMPCore extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new CoreListener(plugin), plugin);
         getServer().getPluginManager().registerEvents(new EffectListener(), plugin);
         getServer().getPluginManager().registerEvents(new GameListener(), plugin);
-        getServer().getPluginManager().registerEvents(new HardcoreListener(), plugin);
         getServer().getPluginManager().registerEvents(new ReportListener(), plugin);
         getServer().getPluginManager().registerEvents(new SpellListener(), plugin);
         getServer().getPluginManager().registerEvents(new StaffListener(), plugin);
@@ -95,12 +71,8 @@ public final class SMPCore extends JavaPlugin {
     }
 
     public void registerRunnables() {
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, new EffectManager(), 20, 2);
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, new EffectManager(plugin), 20, 2);
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new SpellManager(), 20, 1);
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new GameManager(), 20, 1);
-    }
-
-    public void setupSpellRecipes() {
-        new Wands();
     }
 }

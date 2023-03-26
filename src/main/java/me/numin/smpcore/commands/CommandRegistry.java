@@ -33,8 +33,6 @@ public class CommandRegistry implements CommandExecutor {
                     new CoreCommand(player, args);
                 } else if (label.equalsIgnoreCase("effect")) {
                     new EffectCommand(player, args);
-                } else if (label.equalsIgnoreCase("hardcore")) {
-                    new HardcoreCommand(player, args);
                 } else if (label.equalsIgnoreCase("game")) {
                     new GameCommand(player, args);
                 } else if (label.equalsIgnoreCase("report")) {

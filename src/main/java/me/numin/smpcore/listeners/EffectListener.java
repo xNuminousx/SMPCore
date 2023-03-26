@@ -1,6 +1,5 @@
 package me.numin.smpcore.listeners;
 
-import me.numin.smpcore.SMPCore;
 import me.numin.smpcore.effects.RainbowEffect;
 import me.numin.smpcore.effects.RedstoneEffect;
 import me.numin.smpcore.effects.api.Effect;
@@ -81,7 +80,7 @@ public class EffectListener implements Listener {
         if (to == null)
             return;
 
-        for (Effect effect : SMPCore.effects) {
+        for (Effect effect : Effect.effects) {
             if (effect instanceof RainbowEffect) {
                 RainbowEffect rEffect = (RainbowEffect) effect;
                 rEffect.setIsMoving(from.distance(to) > 0);

@@ -6,11 +6,14 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 //TODO: Add new familiars. Different designs, effects, etc.
 
 public class Familiar {
+
+    public static ArrayList<Familiar> familiars = new ArrayList<>();
 
     private Location destination;
     private Location location;
@@ -32,12 +35,18 @@ public class Familiar {
         this.range = SMPCore.plugin.getConfig().getDouble("Spells.SpellOfFamiliar.Range");
         this.soundFrequency = SMPCore.plugin.getConfig().getDouble("Spells.SpellOfFamiliar.SoundFrequency");
 
-        SMPCore.familiars.add(this);
+        Familiar.familiars.add(this);
+    }
+
+    public static void killAll(){
+        for (Familiar familiar : familiars) {
+            familiar.kill();
+        }
     }
 
     public void kill() {
         host.getWorld().playSound(location, Sound.ENTITY_GHAST_DEATH, 0.1F, 1.5F);
-        SMPCore.familiars.remove(this);
+        Familiar.familiars.remove(this);
     }
 
     public void move() {
@@ -95,16 +104,6 @@ public class Familiar {
         host.getWorld().spawnParticle(Particle.TOWN_AURA, location, 10, 0.06, 0.06, 0.06, 0);
         host.getWorld().spawnParticle(Particle.SCRAPE, location, 2, 0.05, 0.05, 0.05, 0);
     }
-
-    /*public boolean hasObstacleInPath(Location target) {
-        World world = target.getWorld();
-        Location start = location.clone().add(0, 1, 0);
-        Vector ray = target.toVector().subtract(start.toVector().normalize());
-        double distance = start.distance(target);
-
-        RayTraceResult result = world.rayTraceBlocks(start, ray, distance, FluidCollisionMode.NEVER, true);
-        return result != null && result.getHitBlock() != null;
-    }*/
 
     public void refreshDestination() {
         destination = generateRandomPoint(host.getLocation());

@@ -1,6 +1,5 @@
 package me.numin.smpcore.spells;
 
-import me.numin.smpcore.SMPCore;
 import me.numin.smpcore.spells.api.Spell;
 import me.numin.smpcore.utils.Familiar;
 import org.bukkit.entity.Player;
@@ -13,7 +12,7 @@ public class SpellOfFamiliar extends Spell {
 
     @Override
     public void cast() {
-        for (Familiar familiar : SMPCore.familiars) {
+        for (Familiar familiar : Familiar.familiars) {
             if (familiar.getHost().equals(getPlayer())) {
                 familiar.kill();
                 getPlayer().sendMessage("Your familiar has returned to your wand.");

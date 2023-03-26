@@ -25,6 +25,15 @@ public class Database {
         this.reportData = new ReportData(plugin, this);
     }
 
+    public void close() {
+        try {
+            getConnection().close();
+        } catch (SQLException e) {
+            plugin.getLogger().info("Unable to close database.");
+            throw new RuntimeException(e);
+        }
+    }
+
     public void uploadAllData() {
         for (ServerPlayer sPlayer : playerData.getServerPlayers().values()) {
             playerData.insertServerPlayer(sPlayer);
@@ -36,11 +45,11 @@ public class Database {
     }
 
     public Connection getConnection() throws SQLException {
-        if (connection != null)
+        if (connection != null && !connection.isClosed() && connection.isValid(5))
             return connection;
 
-        this.connection = DriverManager.getConnection(url, username, password);
-        plugin.getLogger().info("Connected to the database.");
+        connection = DriverManager.getConnection(url, username, password);
+        plugin.getLogger().info("Database connection established.");
 
         return connection;
     }

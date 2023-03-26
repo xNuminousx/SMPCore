@@ -54,6 +54,11 @@ public abstract class Game implements IGame {
         games.remove(this);
     }
 
+    public static void stopAll() {
+        for (Game game : games)
+            game.stop();
+    }
+
     @Override
     public Player getHost() {
         return host;

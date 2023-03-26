@@ -9,16 +9,11 @@ import java.util.List;
 public class Config {
 
     private final SMPCore plugin;
-    private final StorageFile file;
 
     public Config(SMPCore plugin) {
         this.plugin = plugin;
-        this.file = new StorageFile("config");
+        new StorageFile("config");
         load();
-    }
-
-    public StorageFile getFile() {
-        return file;
     }
 
     public void load() {

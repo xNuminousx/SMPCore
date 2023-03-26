@@ -77,7 +77,7 @@ public class CoreListener implements Listener {
 
         if (CoreInventory.hasInventory(player)) {
             CoreInventory coreInventory = CoreInventory.getCoreInventory(player);
-            SMPCore.inventories.remove(coreInventory);
+            CoreInventory.inventories.remove(coreInventory);
         }
     }
 
@@ -92,14 +92,14 @@ public class CoreListener implements Listener {
         }
 
         Effect effect = null;
-        for (Effect eff : SMPCore.effects) {
+        for (Effect eff : Effect.effects) {
             if (eff.getPlayer().getUniqueId().equals(player.getUniqueId())) {
                 effect = eff;
             }
         }
 
         if (effect != null) {
-            SMPCore.effects.remove(effect);
+            Effect.effects.remove(effect);
         }
     }
 

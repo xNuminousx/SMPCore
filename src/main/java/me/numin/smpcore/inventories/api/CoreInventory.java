@@ -11,10 +11,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public abstract class CoreInventory implements InteractiveInventory {
+
+    public static ArrayList<CoreInventory> inventories = new ArrayList<>();
 
     // Inventory item locations;
     public int topCenterLeft = 2;
@@ -41,15 +44,15 @@ public abstract class CoreInventory implements InteractiveInventory {
         setItems();
 
         if (hasInventory(player)) {
-            SMPCore.inventories.remove(CoreInventory.getCoreInventory(player));
+            inventories.remove(CoreInventory.getCoreInventory(player));
         }
 
         player.openInventory(getInventory());
-        SMPCore.inventories.add(this);
+        inventories.add(this);
     }
 
     public void close() {
-        SMPCore.inventories.remove(this);
+        inventories.remove(this);
         player.closeInventory();
     }
 
@@ -114,7 +117,7 @@ public abstract class CoreInventory implements InteractiveInventory {
     }
 
     public static CoreInventory getCoreInventory(Player player) {
-        for (CoreInventory coreInventory : SMPCore.inventories) {
+        for (CoreInventory coreInventory : inventories) {
             if (coreInventory.getPlayer().getUniqueId() == player.getUniqueId()) {
                 return coreInventory;
             }
@@ -123,7 +126,7 @@ public abstract class CoreInventory implements InteractiveInventory {
     }
 
     public static boolean hasInventory(Player player) {
-        for (CoreInventory coreInventory : SMPCore.inventories)
+        for (CoreInventory coreInventory : inventories)
             if (coreInventory.getPlayer().getUniqueId().equals(player.getUniqueId())) {
                 return true;
             }

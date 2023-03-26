@@ -13,9 +13,6 @@ commands:
   report:
     usage: /<command>
     description: Used to report issues on the server.
-  hardcore:
-    usage: /<command>
-    description: Used to manipulate the hardcore game.
   effect:
     usage: /<command>
     description: Used to activate or remove effects.
