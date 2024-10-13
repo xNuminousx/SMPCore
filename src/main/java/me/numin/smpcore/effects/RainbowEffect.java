@@ -32,7 +32,7 @@ public class RainbowEffect extends Effect {
         Particle.DustOptions color = rainbowCycle.cycle();
 
         if (isMoving) {
-            location.getWorld().spawnParticle(Particle.REDSTONE, location.add(0, 1, 0), amount, 0.4, 0.3, 0.4, color);
+            location.getWorld().spawnParticle(Particle.DUST, location.add(0, 1, 0), amount, 0.4, 0.3, 0.4, color);
         } else {
             point += 360/90;
             if (point == 360) {
@@ -45,7 +45,7 @@ public class RainbowEffect extends Effect {
             double sY = Math.sin(angle * 3) / 2;
             double sZ = Math.sin(angle * multiplier);
             location.add(sX, sY + 1, sZ);
-            location.getWorld().spawnParticle(Particle.REDSTONE, location, amount, 0.1, 0.1, 0.1, color);
+            location.getWorld().spawnParticle(Particle.DUST, location, amount, 0.1, 0.1, 0.1, color);
             location.subtract(sX, sY + 1, sZ);
         }
     }

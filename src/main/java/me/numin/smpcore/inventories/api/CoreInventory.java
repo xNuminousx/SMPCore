@@ -41,11 +41,11 @@ public abstract class CoreInventory implements InteractiveInventory {
     public void open() {
         if (getType() == InventoryType.CHEST) inventory = Bukkit.createInventory(player, getSlotCount(), getName());
         else inventory = Bukkit.createInventory(player, getType(), getName());
+
         setItems();
 
-        if (hasInventory(player)) {
+        if (hasInventory(player))
             inventories.remove(CoreInventory.getCoreInventory(player));
-        }
 
         player.openInventory(getInventory());
         inventories.add(this);

@@ -31,8 +31,7 @@ public class ReportData {
             plugin.getLogger().warning("Failed to setup table for " + getTableName());
             e.printStackTrace();
         }
-
-        loadReports();
+        //loadReports();
     }
 
     public Report getReport(String id) {

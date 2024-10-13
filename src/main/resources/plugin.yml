@@ -1,7 +1,7 @@
 name: SMPCore
 version: ${project.version}
 main: me.numin.smpcore.SMPCore
-api-version: 1.19
+api-version: 1.21.1
 prefix: CORE
 authors: [Numin]
 description: Core plugin for the SMP server

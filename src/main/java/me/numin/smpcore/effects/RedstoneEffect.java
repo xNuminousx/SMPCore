@@ -31,7 +31,7 @@ public class RedstoneEffect extends Effect {
     @Override
     public void run() {
         Location location = player.getLocation().add(0, 1, 0);
-        location.getWorld().spawnParticle(Particle.REDSTONE, location, amount, x, y, z, 0, new Particle.DustOptions(color, 1));
+        location.getWorld().spawnParticle(Particle.DUST, location, amount, x, y, z, 0, new Particle.DustOptions(color, 1));
     }
 
     @Override

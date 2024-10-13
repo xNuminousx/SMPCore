@@ -32,7 +32,7 @@ public class CoreHUD  extends CoreInventory {
     public ItemStack constructWand() {
         ItemStack item = new ItemStack(Material.STICK);
         ItemMeta meta = item.getItemMeta();
-        meta.addEnchant(Enchantment.DAMAGE_ALL, 1, true);
+        meta.addEnchant(Enchantment.PIERCING, 1, true);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         item.setItemMeta(meta);
         return item;

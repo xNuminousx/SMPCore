@@ -47,9 +47,9 @@ public class BattleEntity {
         monsters.add(Skeleton.class);
         monsters.add(Spider.class);
 
-        if (game.getWave().getStage() >= 5) {
+        if (game.getWave().getStage() >= 5)
             monsters.add(Blaze.class);
-        }
+
         return monsters;
     }
 

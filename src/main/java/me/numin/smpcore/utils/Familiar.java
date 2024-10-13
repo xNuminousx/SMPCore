@@ -101,7 +101,7 @@ public class Familiar {
         if (new Random().nextInt(1000) < soundFrequency)
             host.getWorld().playSound(location, Sound.ENTITY_GHAST_AMBIENT, 0.1F, 2);
 
-        host.getWorld().spawnParticle(Particle.TOWN_AURA, location, 10, 0.06, 0.06, 0.06, 0);
+        host.getWorld().spawnParticle(Particle.ASH, location, 10, 0.06, 0.06, 0.06, 0);
         host.getWorld().spawnParticle(Particle.SCRAPE, location, 2, 0.05, 0.05, 0.05, 0);
     }
 

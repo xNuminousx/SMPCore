@@ -39,9 +39,9 @@ public class SpellOfDamaging extends Spell {
     @Override
     public void cast() {
         blast.add(direction.multiply(speed));
-        blast.getWorld().spawnParticle(Particle.SMOKE_LARGE, blast, 2, 0, 0, 0, 0);
-        blast.getWorld().spawnParticle(Particle.FIREWORKS_SPARK, blast, 1, 0, 0, 0, 0.07);
-        blast.getWorld().spawnParticle(Particle.CRIT_MAGIC, blast, 3, 0.1, 0.1, 0.1, 0);
+        blast.getWorld().spawnParticle(Particle.LARGE_SMOKE, blast, 2, 0, 0, 0, 0);
+        blast.getWorld().spawnParticle(Particle.FIREWORK, blast, 1, 0, 0, 0, 0.07);
+        blast.getWorld().spawnParticle(Particle.CRIMSON_SPORE, blast, 3, 0.1, 0.1, 0.1, 0);
 
         if (blast.distance(origin) > range || blast.getBlock().getType().isSolid()) {
             remove();

@@ -27,17 +27,19 @@ public final class SMPCore extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
+        database = new Database(plugin);
+        gameData = new GameData(plugin);
+        staff = getConfig().getStringList("Staff");
 
         new Config(plugin);
         new Wands();
 
-        staff = getConfig().getStringList("Staff");
-        gameData = new GameData(plugin);
-        database = new Database(this);
-
         CommandRegistry.registerCommands();
         registerListeners();
         registerRunnables();
+
+        // Running a scheduler resolves a NPE generated in the report initialization.
+        getServer().getScheduler().runTaskLater(this, () -> database.getReportData().loadReports(), 40L);
     }
 
     @Override

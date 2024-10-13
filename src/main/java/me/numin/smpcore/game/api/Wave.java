@@ -60,7 +60,6 @@ public class Wave {
 
                 if (stage % 5 == 0) { // Every 5th wave, increase the number of mobs that spawn.
                     mobsToSpawn++;
-                    SMPCore.plugin.getLogger().info("5th wave reached. Increasing number of mobs to spawn.");
                 }
 
                 broadcast("Grace period is over. Wave #" + stage + " starting now.");

@@ -72,7 +72,7 @@ public class Wands {
         ItemStack item = new ItemStack(Material.STICK);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName("Spell of Damaging");
-        meta.addEnchant(Enchantment.DAMAGE_ALL, 1, true);
+        meta.addEnchant(Enchantment.PIERCING, 1, true);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         List<String> lore = Arrays.asList("Spells left:","100");
         meta.setLore(lore);
@@ -84,7 +84,7 @@ public class Wands {
         ItemStack item = new ItemStack(Material.STICK);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName("Spell of Familiar");
-        meta.addEnchant(Enchantment.DAMAGE_ALL, 1, true);
+        meta.addEnchant(Enchantment.PIERCING, 1, true);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         item.setItemMeta(meta);
         return item;
@@ -94,7 +94,7 @@ public class Wands {
         ItemStack item = new ItemStack(Material.STICK);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName("Spell of Healing");
-        meta.addEnchant(Enchantment.DAMAGE_ALL, 1, true);
+        meta.addEnchant(Enchantment.PIERCING, 1, true);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         List<String> lore = Arrays.asList("Spells left:","100");
         meta.setLore(lore);

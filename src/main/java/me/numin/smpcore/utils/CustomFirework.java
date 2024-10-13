@@ -21,7 +21,7 @@ public class CustomFirework {
     private final boolean travel;
 
     public CustomFirework(Player player, int power, Color color, FireworkEffect.Type type, boolean flicker, boolean trail, boolean travel) {
-        Firework firework = (Firework) player.getWorld().spawnEntity(player.getLocation().add(0, 2, 0), EntityType.FIREWORK);
+        Firework firework = (Firework) player.getWorld().spawnEntity(player.getLocation().add(0, 2, 0), EntityType.FIREWORK_ROCKET);
         FireworkMeta fireworkMeta = firework.getFireworkMeta();
         fireworkMeta.addEffect(FireworkEffect.builder().with(type).withColor(color).flicker(flicker).trail(trail).build());
         fireworkMeta.setPower(power);
@@ -39,7 +39,7 @@ public class CustomFirework {
     }
 
     public CustomFirework(Location location, int power, Color color, FireworkEffect.Type type, boolean flicker, boolean trail, boolean travel) {
-        Firework firework = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
+        Firework firework = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK_ROCKET);
         FireworkMeta fireworkMeta = firework.getFireworkMeta();
         fireworkMeta.addEffect(FireworkEffect.builder().with(type).withColor(color).flicker(flicker).trail(trail).build());
         fireworkMeta.setPower(power);
