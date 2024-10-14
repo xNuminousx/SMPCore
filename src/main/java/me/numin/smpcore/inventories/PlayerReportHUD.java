@@ -42,6 +42,11 @@ public class PlayerReportHUD extends CoreInventory {
     }
 
     @Override
+    public Identifier getIdentifier() {
+        return Identifier.PLAYER_REPORT;
+    }
+
+    @Override
     public String getName() {
         return "Report a Player";
     }

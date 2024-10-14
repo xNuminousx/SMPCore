@@ -29,19 +29,17 @@ public class PlayerLocationHUD extends CoreInventory {
             String name = onlinePlayer.getName();
             String nickname = onlinePlayer.getDisplayName();
             String currWorld = onlinePlayer.getWorld().getName();
-            double x = Math.round(onlinePlayer.getLocation().getX());
-            double y = Math.round(onlinePlayer.getLocation().getY());
-            double z = Math.round(onlinePlayer.getLocation().getZ());
-            String sX = Double.toString(x);
-            String sY = Double.toString(y);
-            String sZ = Double.toString(z);
+            String x = Double.toString(Math.round(onlinePlayer.getLocation().getX()));
+            String y = Double.toString(Math.round(onlinePlayer.getLocation().getY()));
+            String z = Double.toString(Math.round(onlinePlayer.getLocation().getZ()));
 
             List<String> loreConstruct = new ArrayList<>();
-            loreConstruct.add(ChatColor.RESET + "Nickname: " + nickname);
-            loreConstruct.add(ChatColor.RESET + "World: " + currWorld);
-            loreConstruct.add(ChatColor.RESET + "X: " + sX);
-            loreConstruct.add(ChatColor.RESET + "Y: " + sY);
-            loreConstruct.add(ChatColor.RESET + "Z: " + sZ);
+            loreConstruct.add(ChatColor.RESET + "" + ChatColor.AQUA + "Nickname: " + nickname);
+            loreConstruct.add(ChatColor.RESET + "" + ChatColor.GREEN + "World: " + currWorld);
+            loreConstruct.add(ChatColor.RESET + "X: " + x);
+            loreConstruct.add(ChatColor.RESET + "Y: " + y);
+            loreConstruct.add(ChatColor.RESET + "Z: " + z);
+            loreConstruct.add(ChatColor.RESET + "" + ChatColor.GRAY + "Click to teleport");
 
             skullMeta.setDisplayName(name);
             skullMeta.setLore(loreConstruct);
@@ -63,6 +61,11 @@ public class PlayerLocationHUD extends CoreInventory {
     @Override
     public InventoryType getType() {
         return InventoryType.CHEST;
+    }
+
+    @Override
+    public Identifier getIdentifier() {
+        return Identifier.PLAYER_LOCATIONS;
     }
 
     @Override

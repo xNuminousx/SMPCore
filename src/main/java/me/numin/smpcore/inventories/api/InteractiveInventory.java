@@ -12,5 +12,6 @@ public interface InteractiveInventory {
     Inventory getInventory();
     InventoryType getType();
     Player getPlayer();
+    CoreInventory.Identifier getIdentifier();
     String getName();
 }

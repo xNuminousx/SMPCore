@@ -22,11 +22,11 @@ public class CoreHUD  extends CoreInventory {
     @Override
     public void setItems() {
         setItem(1, Material.WRITABLE_BOOK, "Reporting", Arrays.asList("Command Alternative:", "/report"));
-        setItem(3, Material.FIREWORK_ROCKET, "Effects", Arrays.asList("Command Alternative:", "/effect"));
+        setItem(3, Material.MAGMA_CREAM, "Effects", Arrays.asList("Command Alternative:", "/effect"));
         setItem(5, constructWand(), "Wand Recipes", Arrays.asList("Command Alternative:", "/wand recipe"));
         setItem(7, Material.IRON_SWORD, "Games", Arrays.asList("Command Alternative:", "/game"));
         setItem(21, Material.NETHER_STAR, "Staff Actions", null);
-        setSkullItem(23, UUID.fromString("a3279535-9ea7-484a-8f3e-96019a6e96e7"), "Numin", Collections.singletonList("Lord creator of all things..."));
+        setSkullItem(23, UUID.fromString("a3279535-9ea7-484a-8f3e-96019a6e96e7"), "Numin", Collections.singletonList("Lord creator of all things"));
     }
 
     public ItemStack constructWand() {
@@ -41,6 +41,11 @@ public class CoreHUD  extends CoreInventory {
     @Override
     public InventoryType getType() {
         return InventoryType.CHEST;
+    }
+
+    @Override
+    public Identifier getIdentifier() {
+        return Identifier.CORE;
     }
 
     @Override

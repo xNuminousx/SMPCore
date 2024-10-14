@@ -127,9 +127,7 @@ public abstract class CoreInventory implements InteractiveInventory {
 
     public static boolean hasInventory(Player player) {
         for (CoreInventory coreInventory : inventories)
-            if (coreInventory.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-                return true;
-            }
+            return coreInventory.getPlayer().getUniqueId().equals(player.getUniqueId());
         return false;
     }
 
@@ -138,5 +136,10 @@ public abstract class CoreInventory implements InteractiveInventory {
                 (event.getCurrentItem().equals(new ItemStack(Material.AIR))) ||
                 event.getCurrentItem().getItemMeta() == null ||
                 event.getCurrentItem().getItemMeta().getDisplayName().isEmpty();
+    }
+
+    public enum Identifier {
+        BUG_REPORT, COLOR_SELECTOR, CORE, SPELL_OF_DAMAGING, EFFECT, FAMILIAR_RECIPE, GAME, GAME_SELECTOR,
+        SPELL_OF_HEALING, MAIN_REPORT, PLAYER_LOCATIONS, PLAYER_REPORT, STAFF, STAFF_REPORT, WAND_RECIPES
     }
 }

@@ -27,6 +27,11 @@ public class MainReportHUD extends CoreInventory {
     }
 
     @Override
+    public Identifier getIdentifier() {
+        return Identifier.MAIN_REPORT;
+    }
+
+    @Override
     public String getName() {
         return "Make a Report";
     }

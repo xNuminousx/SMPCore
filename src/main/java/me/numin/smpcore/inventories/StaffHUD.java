@@ -14,13 +14,18 @@ public class StaffHUD extends CoreInventory {
     @Override
     public void setItems() {
         setItem(topCenterLeft, Material.WRITTEN_BOOK, "Manage Reports", null);
-        setItem(topCenterRight, Material.COMPASS, "Player Locations", null);
+        setItem(topCenterRight, Material.RECOVERY_COMPASS, "Player Locations", null);
         setItem(bottomCenter, Material.BARRIER, "Exit", null);
     }
 
     @Override
     public InventoryType getType() {
         return InventoryType.CHEST;
+    }
+
+    @Override
+    public Identifier getIdentifier() {
+        return Identifier.STAFF;
     }
 
     @Override

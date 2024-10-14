@@ -4,6 +4,8 @@ import me.numin.smpcore.inventories.CoreHUD;
 import me.numin.smpcore.inventories.PlayerLocationHUD;
 import me.numin.smpcore.inventories.StaffReportManagerHUD;
 import me.numin.smpcore.inventories.api.CoreInventory;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,7 +25,9 @@ public class StaffListener implements Listener {
         if (CoreInventory.hasInventory(player)) {
             CoreInventory coreInventory = CoreInventory.getCoreInventory(player);
 
-            if (coreInventory.getName().equalsIgnoreCase("Staff Actions")) {
+            if (coreInventory == null) return;
+
+            if (coreInventory.getIdentifier().equals(CoreInventory.Identifier.STAFF)) {
                 if (invalidClick()) {
                     event.setCancelled(true);
                     return;
@@ -39,13 +43,21 @@ public class StaffListener implements Listener {
                     new PlayerLocationHUD(player);
                 }
                 event.setCancelled(true);
-            } else if (coreInventory.getName().equalsIgnoreCase("Player Locations")) {
+            } else if (coreInventory.getIdentifier().equals(CoreInventory.Identifier.PLAYER_LOCATIONS)) {
                 if (invalidClick()) {
                     event.setCancelled(true);
-                    //return;
+                    return;
                 }
 
                 String itemName = event.getCurrentItem().getItemMeta().getDisplayName();
+
+                for (Player targetPlayer : Bukkit.getOnlinePlayers()) {
+                    if (itemName.equals(targetPlayer.getName())) {
+                        player.teleport(targetPlayer.getLocation());
+                        player.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "Swoooosh!");
+                        coreInventory.close();
+                    }
+                }
 
                 if (itemName.equalsIgnoreCase("Exit")) {
                     new CoreHUD(player);

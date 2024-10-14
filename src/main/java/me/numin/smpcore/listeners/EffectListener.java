@@ -28,7 +28,9 @@ public class EffectListener implements Listener {
         if (CoreInventory.hasInventory(player)) {
             CoreInventory coreInventory = CoreInventory.getCoreInventory(player);
 
-            if (coreInventory.getName().equalsIgnoreCase("Effects")) {
+            if (coreInventory == null) return;
+            
+            if (coreInventory.getIdentifier().equals(CoreInventory.Identifier.EFFECT)) {
                 if (invalidClick()) {
                     event.setCancelled(true);
                     return;
@@ -49,14 +51,14 @@ public class EffectListener implements Listener {
                 event.setCancelled(true);
             }
 
-            if (coreInventory.getName().equalsIgnoreCase("Color Selector")) {
+            if (coreInventory.getIdentifier().equals(CoreInventory.Identifier.COLOR_SELECTOR)) {
                 if (invalidClick()) {
                     event.setCancelled(true);
                     return;
                 }
 
                 String itemName = event.getCurrentItem().getItemMeta().getDisplayName();
-                Color color;
+                Color color = Color.BLACK;
 
                 if (itemName.equalsIgnoreCase("Red")) color = Color.RED;
                 else if (itemName.equalsIgnoreCase("Orange")) color = Color.ORANGE;
@@ -65,7 +67,6 @@ public class EffectListener implements Listener {
                 else if (itemName.equalsIgnoreCase("Blue")) color = Color.BLUE;
                 else if (itemName.equalsIgnoreCase("Purple")) color = Color.PURPLE;
                 else if (itemName.equalsIgnoreCase("Pink")) color = Color.FUCHSIA;
-                else color = Color.BLACK;
 
                 new RedstoneEffect(player, color);
             }

@@ -28,6 +28,11 @@ public class ColorSelectorHUD extends CoreInventory {
     }
 
     @Override
+    public Identifier getIdentifier() {
+        return Identifier.COLOR_SELECTOR;
+    }
+
+    @Override
     public int getSlotCount() {
         return 9;
     }

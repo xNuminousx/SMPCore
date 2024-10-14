@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 public class RainbowEffect extends Effect {
 
-    private Player player;
+    private final Player player;
     private Location location;
     private RainbowCycle rainbowCycle;
 

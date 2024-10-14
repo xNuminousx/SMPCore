@@ -30,6 +30,11 @@ public class FamiliarRecipeHUD extends CoreInventory {
     }
 
     @Override
+    public Identifier getIdentifier() {
+        return Identifier.FAMILIAR_RECIPE;
+    }
+
+    @Override
     public String getName() {
         return "Spell of Familiar";
     }

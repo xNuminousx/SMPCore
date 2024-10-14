@@ -37,7 +37,9 @@ public class CoreListener implements Listener {
         if (CoreInventory.hasInventory(player)) {
             CoreInventory coreInventory = CoreInventory.getCoreInventory(player);
 
-            if (coreInventory.getName().equalsIgnoreCase("Core Features")) {
+            if (coreInventory == null) return;
+
+            if (coreInventory.getIdentifier().equals(CoreInventory.Identifier.CORE)) {
                 if (coreInventory.invalidClick(event)) {
                     event.setCancelled(true);
                     return;

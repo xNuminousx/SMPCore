@@ -31,4 +31,9 @@ public class BugReportHUD extends CoreInventory {
     public String getName() {
         return "Report a Bug";
     }
+
+    @Override
+    public Identifier getIdentifier() {
+        return Identifier.BUG_REPORT;
+    }
 }

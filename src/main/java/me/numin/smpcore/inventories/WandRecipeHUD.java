@@ -26,6 +26,11 @@ public class WandRecipeHUD extends CoreInventory {
     }
 
     @Override
+    public Identifier getIdentifier() {
+        return Identifier.WAND_RECIPES;
+    }
+
+    @Override
     public String getName() {
         return "Wand Recipes";
     }

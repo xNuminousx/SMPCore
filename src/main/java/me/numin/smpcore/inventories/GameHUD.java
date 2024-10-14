@@ -24,6 +24,11 @@ public class GameHUD extends CoreInventory {
     }
 
     @Override
+    public Identifier getIdentifier() {
+        return Identifier.GAME;
+    }
+
+    @Override
     public int getSlotCount() {
         return 9;
     }

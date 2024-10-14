@@ -28,6 +28,11 @@ public class EffectHUD extends CoreInventory {
     }
 
     @Override
+    public Identifier getIdentifier() {
+        return Identifier.EFFECT;
+    }
+
+    @Override
     public String getName() {
         return "Effects";
     }

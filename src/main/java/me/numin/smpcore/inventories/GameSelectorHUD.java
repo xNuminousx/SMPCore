@@ -3,7 +3,6 @@ package me.numin.smpcore.inventories;
 import me.numin.smpcore.game.MobBattle;
 import me.numin.smpcore.game.api.Game;
 import me.numin.smpcore.inventories.api.CoreInventory;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -34,6 +33,11 @@ public class GameSelectorHUD extends CoreInventory {
     @Override
     public InventoryType getType() {
         return InventoryType.CHEST;
+    }
+
+    @Override
+    public Identifier getIdentifier() {
+        return Identifier.GAME_SELECTOR;
     }
 
     @Override

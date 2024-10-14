@@ -41,7 +41,12 @@ public class StaffReportManagerHUD extends CoreInventory {
     }
 
     @Override
+    public Identifier getIdentifier() {
+        return Identifier.STAFF_REPORT;
+    }
+
+    @Override
     public String getName() {
-        return "Reports";
+        return "Reports (" + SMPCore.plugin.getDatabase().getReportData().getReports().size() + ")";
     }
 }

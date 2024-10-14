@@ -27,6 +27,8 @@ public class GameListener implements Listener {
         if (CoreInventory.hasInventory(player)) {
             CoreInventory coreInventory = CoreInventory.getCoreInventory(player);
 
+            if (coreInventory == null) return;
+
             if (coreInventory.invalidClick(event)) {
                 event.setCancelled(true);
                 return;
@@ -34,7 +36,7 @@ public class GameListener implements Listener {
 
             String itemName = event.getCurrentItem().getItemMeta().getDisplayName();
 
-            if (coreInventory.getName().equalsIgnoreCase("Game Selector")) {
+            if (coreInventory.getIdentifier().equals(CoreInventory.Identifier.GAME_SELECTOR)) {
                 if (itemName.equalsIgnoreCase("no active games")) {
                     new GameHUD(player);
                 }

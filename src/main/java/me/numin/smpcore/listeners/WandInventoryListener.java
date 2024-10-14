@@ -23,12 +23,14 @@ public class WandInventoryListener implements Listener {
             CoreInventory coreInventory = CoreInventory.getCoreInventory(player);
             ItemStack clickedItem = event.getCurrentItem();
 
+            if (coreInventory == null) return;
+
             if (invalidClick()) {
                 event.setCancelled(true);
                 return;
             }
 
-            if (coreInventory.getName().equalsIgnoreCase("Wand Recipes")) {
+            if (coreInventory.getIdentifier().equals(CoreInventory.Identifier.WAND_RECIPES)) {
                 if (clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("Spell of Damaging")) {
                     new DamagingRecipeHUD(player);
                 } else if (clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("Spell of Healing")) {
@@ -38,9 +40,9 @@ public class WandInventoryListener implements Listener {
                 } else if (clickedItem.getItemMeta().getDisplayName().equalsIgnoreCase("Exit")) {
                     new CoreHUD(player);
                 }
-            } else if (coreInventory.getName().equalsIgnoreCase("Spell of Damaging") ||
-                    coreInventory.getName().equalsIgnoreCase("Spell of Healing") ||
-                    coreInventory.getName().equalsIgnoreCase("Spell of Familiar")) {
+            } else if ((coreInventory.getIdentifier().equals(CoreInventory.Identifier.SPELL_OF_DAMAGING)) ||
+                    (coreInventory.getIdentifier().equals(CoreInventory.Identifier.SPELL_OF_HEALING)) ||
+                            (coreInventory.getIdentifier().equals(CoreInventory.Identifier.FAMILIAR_RECIPE))) {
                 assert clickedItem != null;
                 if (Wands.isWand(clickedItem)) {
                     new WandRecipeHUD(player);

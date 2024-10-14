@@ -30,6 +30,11 @@ public class DamagingRecipeHUD extends CoreInventory {
     }
 
     @Override
+    public Identifier getIdentifier() {
+        return Identifier.SPELL_OF_DAMAGING;
+    }
+
+    @Override
     public String getName() {
         return "Spell of Damaging";
     }

@@ -34,7 +34,9 @@ public class ReportListener implements Listener {
         if (CoreInventory.hasInventory(player)) {
             CoreInventory coreInventory = CoreInventory.getCoreInventory(player);
 
-            if (coreInventory.getName().equalsIgnoreCase("Make a Report")) {
+            if (coreInventory == null) return;
+
+            if (coreInventory.getIdentifier().equals(CoreInventory.Identifier.MAIN_REPORT)) {
                 if (invalidClick()) {
                     event.setCancelled(true);
                     return;
@@ -57,7 +59,7 @@ public class ReportListener implements Listener {
                     }
                 }
                 event.setCancelled(true);
-            } else if (coreInventory.getName().equalsIgnoreCase("Report a Bug")) {
+            } else if (coreInventory.getIdentifier().equals(CoreInventory.Identifier.BUG_REPORT)) {
                 if (invalidClick()) {
                     event.setCancelled(true);
                     return;
@@ -83,7 +85,7 @@ public class ReportListener implements Listener {
                 coreInventory.close();
                 player.sendMessage(CoreMessage.reportDescPrompt());
                 typingReason = true;
-            } else if (coreInventory.getName().equalsIgnoreCase("Report a Player")) {
+            } else if (coreInventory.getIdentifier().equals(CoreInventory.Identifier.PLAYER_REPORT)) {
                 if (invalidClick()) {
                     event.setCancelled(true);
                     return;
@@ -106,7 +108,7 @@ public class ReportListener implements Listener {
                 player.sendMessage(CoreMessage.reportDescPrompt());
                 type = ReportType.PLAYER;
                 typingReason = true;
-            } else if (coreInventory.getName().equalsIgnoreCase("Reports")) {
+            } else if (coreInventory.getIdentifier().equals(CoreInventory.Identifier.STAFF_REPORT)) {
                 if (invalidClick()) {
                     event.setCancelled(true);
                     return;

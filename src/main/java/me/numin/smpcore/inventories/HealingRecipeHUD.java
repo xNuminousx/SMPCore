@@ -30,6 +30,11 @@ public class HealingRecipeHUD extends CoreInventory {
     }
 
     @Override
+    public Identifier getIdentifier() {
+        return Identifier.SPELL_OF_HEALING;
+    }
+
+    @Override
     public String getName() {
         return "Spell of Healing";
     }
